@@ -1,28 +1,32 @@
-Meteor.publish("regions", () ->
-    player = Characters.findOne({owner: this.userId})
-    if not player?
-        this.error(new Meteor.Error(930, "No characters owned by user."))
+Meteor.publish("regions", (currentRoom) ->
+    if not currentRoom?
+        this.error new Meteor.Error(950, "argument to publish is null")
     else
         #console.log(player.currentRoom)
-        return Regions.find({'rooms.name': {$in: [player.currentRoom]}})
+        return Regions.find({rooms: {$in: [currentRoom]}})
 )
 
-Meteor.publish("messages", (currentRoom, timestamp) ->
-    if not currentRoom?
+Meteor.publish("rooms", (region) ->
+    if not region? 
+        this.error new Meteor.Error(990, "Malformed or invalid region.")
+    else
+        return Rooms.find({region: region})
+)
+
+Meteor.publish("messages", (roomName, timestamp) ->
+    if not roomName?
         this.error(new Meteor.Error(950, "argument to publish is null"))
     else
-        region = Regions.findOne({'rooms.name': {$in: [currentRoom]}}).name
+        regionName = Regions.findOne({rooms: {$in: [roomName]}}).name
 
-    if not region? 
+    if not regionName? 
         this.error(new Meteor.Error(990, "Malformed or invalid region. Unable to subscribe to messages."))
         return #early out
-
-    #console.log("broadcasting messages to: " + broadcast)
         
     #broadcastTo: global -> all players will receive these messages in published data
     #broadcastTo: regionName -> only players in specified region will receive these messages in published data
     #broadcastTo: roomName -> only players in specified room will receive these messages in published data
-    return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", region, currentRoom ] }})
+    return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }})
 )
 
 Meteor.publish("characters", ()->
@@ -34,11 +38,6 @@ Meteor.publish("characters", ()->
     else
         this.error(new Meteor.Error(920, "User is unknown! Can't return character data."))
 )
-
-#Regions.allow({
-#    update: (userId, doc, fieldNames, modifier) ->
-#        return true
-#})
 
 Messages.allow({
     insert: (userId, doc) -> 

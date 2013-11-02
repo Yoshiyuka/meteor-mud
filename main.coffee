@@ -1,30 +1,36 @@
 if Meteor.isServer
+    #cursor returned is not limited by publish method. This returns ALL regions in collection.
     regions = Regions.find({})
-    #regions.observe
-    #    added: (document) ->
-    #        region = new share.Region(document)
-    #    changed: (document) ->
     regions.observeChanges
         added: (id, fields) ->
-            console.log "added: " + EJSON.stringify(fields)
+            console.log "added: " + fields.name
         changed: (id, fields) ->
             console.log EJSON.stringify(fields)
+    regions.forEach((region)->
+        console.log "this region is: " + region.name
+        rooms = Rooms.find({region: region.name})
+        rooms.forEach((room)->
+            console.log room.name
+        )
+    )
 
 if Meteor.isClient
     Deps.autorun(()->
-        Meteor.subscribe("regions", {onError: (err) -> console.log(err.error + " " + err.reason)})
         Meteor.subscribe("characters", {
             onError: (err) -> 
                 console.log(err.error + " " + err.reason)
             onReady: ->
                 #currentRoom = Characters.findOne({owner: Meteor.userId()})
                 #console.log currentRoom
-
         })
 
         player = Characters.findOne({owner: Meteor.userId()})
         if player?
             #console.log Meteor.userId() + " : " + player.currentRoom
+            Meteor.subscribe("regions", player.currentRoom, {onError: (err) -> console.log(err.error + " " + err.reason)})
+            region = Regions.findOne({})
+
+            Meteor.subscribe("rooms", region, {onError: (err) -> console.log(err.error + " " + err.reason)})
 
             Meteor.subscribe("messages", player.currentRoom, Session.get("sessionStart"), {
                 onError: (err) -> 

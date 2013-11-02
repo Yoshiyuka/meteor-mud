@@ -34,6 +34,6 @@ class Region
             @name = region_document.name
         if region_document.rooms?
             for room in region_document.rooms
-                console.log room.name
+                console.log EJSON.stringify(region_document)
 
 share.Region = Region
