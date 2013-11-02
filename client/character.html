@@ -1,0 +1,22 @@
+<template name="character">
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Character</th>
+                    <th>Level</th>
+                    <th>Time Played</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#each characters}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{level}}</td>
+                    <td>{{time_played}}</td>
+                </tr>    
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</template>

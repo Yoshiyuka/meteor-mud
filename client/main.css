@@ -1,0 +1,38 @@
+/* CSS declarations go here */
+input#messageBox{
+    width: 400px 
+}
+
+.centered-pills { display: inline-block; }
+
+body, .modal-open, .modal-open .navbar-fixed-top
+{
+    margin-right: 0 !important; 
+}
+
+textarea{
+    resize: none;
+}
+
+/*.red .active a, 
+.red .active a:hover,
+.red .active a:visited{
+    background-color: red !important; 
+}
+.nav-pills > .active > a, 
+.nav-pills > .active > a:hover,
+.nav-pills > .active > a:visited{*/
+   /* Default styling for navigation pills */
+/*}
+
+.list-group-item{
+    -webkit-border-radius: 5px; 
+       -moz-border-radius: 5px;
+            border-radius: 5px; 
+    background-color: rgb(255, 255, 255); 
+    color: rgb(0, 136, 204); 
+    display: block; 
+}
+.list-group > a:hover{
+    background-color: rgb(206, 206, 206); 
+}*/

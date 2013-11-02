@@ -1,0 +1,60 @@
+<head>
+  <title>Webchat</title>
+  <script>
+      $(document).ready(function(){
+          var setPill = function(e)
+          {  
+              var li = $(e).parent();
+              $(li).siblings().removeClass("active"); 
+              $(li).addClass("active"); 
+              localStorage.setItem("currentPill", $(e).attr("id"));
+          };
+         
+          var lastTab = localStorage.getItem("currentPill"); 
+          if(lastTab)
+          {
+             var tab = $("[id='" + lastTab + "']");
+             setPill(tab);
+          }
+          $(".nav-pills > li > a").click(function(e){
+              setPill(this);
+              e.preventDefault();
+          });
+     });
+ </script>
+ <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+ <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    {{> navigation}}
+    <!--{{yield}}-->
+</body>
+
+<template name="navigation">
+    <nav class="navigation" role="navigation">
+        <div class="container">
+            <div class="row">
+                <div class="span12 text-center">
+                    <ul class="nav nav-pills centered-pills" style="padding-top: 5px">
+                        <li class="active">
+                            <a href="#" id="nav-home" onClick="Router.go('home', null, null, true);"><i class="glyphicon glyphicon-home"/>  Home</a>
+                        </li>
+                        <li>
+                            <a href="#world" id="nav-world" onClick="Router.go('world', null, null, true);"><i class="glyphicon glyphicon-globe"/>  World</a>
+                        </li>
+                        <li>
+                            <a href="#character" id="nav-character" onClick="Router.go('character', null, null, true);"><i class="glyphicon glyphicon-user"/>  Character</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div id="sign-in" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
+        {{> sign_in}}
+    </div>
+</template>
+<template name="home">
+</template>
+
