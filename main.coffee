@@ -1,18 +1,14 @@
 if Meteor.isServer
+    share.World = []
     #cursor returned is not limited by publish method. This returns ALL regions in collection.
     regions = Regions.find({})
     regions.observeChanges
         added: (id, fields) ->
             console.log "added: " + fields.name
+            region = new share.Region(fields)
+            share.World.push(region)
         changed: (id, fields) ->
             console.log EJSON.stringify(fields)
-    regions.forEach((region)->
-        console.log "this region is: " + region.name
-        rooms = Rooms.find({region: region.name})
-        rooms.forEach((room)->
-            console.log room.name
-        )
-    )
 
 if Meteor.isClient
     Deps.autorun(()->
