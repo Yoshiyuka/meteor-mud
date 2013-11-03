@@ -1,12 +1,15 @@
 if Meteor.isServer
-    share.World = []
+    share.World = {}
+    share.World.Regions = []
+    share.World.Date = new Date()
+
     #cursor returned is not limited by publish method. This returns ALL regions in collection.
     regions = Regions.find({})
     regions.observeChanges
         added: (id, fields) ->
             console.log "added: " + fields.name
             region = new share.Region(fields)
-            share.World.push(region)
+            share.World.Regions.push(region)
         changed: (id, fields) ->
             console.log EJSON.stringify(fields)
 
@@ -15,22 +18,22 @@ if Meteor.isClient
         Meteor.subscribe("characters", {
             onError: (err) -> 
                 console.log(err.error + " " + err.reason)
-            onReady: ->
-                #currentRoom = Characters.findOne({owner: Meteor.userId()})
-                #console.log currentRoom
         })
 
         player = Characters.findOne({owner: Meteor.userId()})
         if player?
-            #console.log Meteor.userId() + " : " + player.currentRoom
             Meteor.subscribe("regions", player.currentRoom, {onError: (err) -> console.log(err.error + " " + err.reason)})
             region = Regions.findOne({})
 
             Meteor.subscribe("rooms", region, {onError: (err) -> console.log(err.error + " " + err.reason)})
 
+            # TODO: Replace client-side session time to server-side session time to prevent players from setting
+            # custom sessionStart times to retrieve messages from the past.
             Meteor.subscribe("messages", player.currentRoom, Session.get("sessionStart"), {
                 onError: (err) -> 
                     console.log(err.error + " " + err.reason)
+                onReady: () ->
+                    console.log player.currentRoom + " is ready!"
             })
     )
     ### HELPER FUNCTION ###

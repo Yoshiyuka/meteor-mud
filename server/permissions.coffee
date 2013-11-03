@@ -2,7 +2,6 @@ Meteor.publish("regions", (currentRoom) ->
     if not currentRoom?
         this.error new Meteor.Error(950, "argument to publish is null")
     else
-        #console.log(player.currentRoom)
         return Regions.find({rooms: {$in: [currentRoom]}})
 )
 
@@ -17,7 +16,7 @@ Meteor.publish("messages", (roomName, timestamp) ->
     if not roomName?
         this.error(new Meteor.Error(950, "argument to publish is null"))
     else
-        regionName = Regions.findOne({rooms: {$in: [roomName]}}).name
+        regionName = Rooms.findOne({name: roomName}).region
 
     if not regionName? 
         this.error(new Meteor.Error(990, "Malformed or invalid region. Unable to subscribe to messages."))
@@ -31,9 +30,7 @@ Meteor.publish("messages", (roomName, timestamp) ->
 
 Meteor.publish("characters", ()->
     user = Meteor.users.findOne(this.userId)
-    #console.log(this.userId)
     if user?
-        #console.log("return characters")
         return Characters.find({owner: this.userId})
     else
         this.error(new Meteor.Error(920, "User is unknown! Can't return character data."))
@@ -61,8 +58,7 @@ Meteor.methods(
     enterRoom: (destination) -> 
         check(destination, String)
 
-        #room = share.Room
-
+        
         #return room.enter(destination)
 
     say: (argument) -> 
@@ -73,7 +69,7 @@ Meteor.methods(
             console.log("no player")
         else
             if player.currentRoom isnt undefined
-                Messages.insert({text: player.name + " says: " + argument, broadcastTo: player.currentRoom, sender: this.userId, timestamp: new Date().getTime()})
+                Messages.insert({text: player.name + " says: " + argument, broadcastTo: player.currentRoom, sender: this.userId, timestamp: share.World.Date.getTime()})
     
     yell: (argument) ->
         check(argument, String)
@@ -84,7 +80,7 @@ Meteor.methods(
         else if player.currentRoom isnt undefined
             region = Regions.findOne({'rooms.name': player.currentRoom}).name
             if region isnt undefined
-                Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: new Date().getTime()})
+                Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Date.getTime()})
             else
                 console.log("unable to broadcast yell to region: " + region)
 )

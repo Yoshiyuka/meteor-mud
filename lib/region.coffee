@@ -52,7 +52,7 @@ class Region
         if region_document.name?
             @name = region_document.name
             @roomCursor = Rooms.find({region: @name})
-            @rooms = []
+            @rooms = {}
             @roomObserver = @roomCursor.observeChanges(
                 added: (id, fields) =>
                     console.log @name + " has added a new room: " + fields.name
@@ -61,7 +61,7 @@ class Region
                     else
                         room = new Room(fields)
 
-                    @rooms.push(room)
+                    @rooms[id] = room
 
                 changed: (id, fields) =>
                     console.log @name + " had updated room: " + EJSON.stringify(fields)
