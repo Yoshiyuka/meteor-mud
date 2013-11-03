@@ -1,15 +1,15 @@
 if Meteor.isServer
     share.World = {}
-    share.World.Regions = []
+    share.World.Regions = {}
     share.World.Date = new Date()
 
     #cursor returned is not limited by publish method. This returns ALL regions in collection.
-    regions = Regions.find({})
+    regions = Regions.find()
     regions.observeChanges
         added: (id, fields) ->
             console.log "added: " + fields.name
             region = new share.Region(fields)
-            share.World.Regions.push(region)
+            share.World.Regions[id] = region
         changed: (id, fields) ->
             console.log EJSON.stringify(fields)
 

@@ -58,7 +58,15 @@ Meteor.methods(
     enterRoom: (destination) -> 
         check(destination, String)
 
-        
+        player = Characters.findOne({owner: this.userId})
+        if player? 
+            #Find the region so we can index into the dictionary of room objects.
+            region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
+            room = Rooms.findOne({name: player.currentRoom})
+            
+            if region? and room?
+                share.World.Regions[region._id].rooms[room._id].enter(destination)
+                
         #return room.enter(destination)
 
     say: (argument) -> 
