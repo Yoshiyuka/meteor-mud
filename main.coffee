@@ -22,18 +22,18 @@ if Meteor.isClient
 
         player = Characters.findOne({owner: Meteor.userId()})
         if player?
-            Meteor.subscribe("regions", player.currentRoom, {onError: (err) -> console.log(err.error + " " + err.reason)})
-            region = Regions.findOne({})
-
-            Meteor.subscribe("rooms", region, {onError: (err) -> console.log(err.error + " " + err.reason)})
+            Meteor.subscribe("regions", player.currentRoom, {
+                onError: (err) -> console.log(err.error + " " + err.reason)
+                onReady: () ->
+                    region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
+                    Meteor.subscribe("rooms", region.name, {onError: (err) -> console.log(err.error + " " + err.reason)})
+            })
 
             # TODO: Replace client-side session time to server-side session time to prevent players from setting
             # custom sessionStart times to retrieve messages from the past.
             Meteor.subscribe("messages", player.currentRoom, Session.get("sessionStart"), {
                 onError: (err) -> 
                     console.log(err.error + " " + err.reason)
-                onReady: () ->
-                    console.log player.currentRoom + " is ready!"
             })
     )
     ### HELPER FUNCTION ###
