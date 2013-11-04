@@ -65,22 +65,42 @@ Meteor.methods(
             currentRoom = Rooms.findOne({name: player.currentRoom})
             targetRoom = Rooms.findOne({name: destination})
 
-            if region? and currentRoom? and targetRoom?
-                currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
-                targetIndex = share.World.Regions[region._id].rooms[targetRoom._id]
+        if region? and currentRoom? and targetRoom?
+            currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
+            targetIndex = share.World.Regions[region._id].rooms[targetRoom._id]
 
-                validMove = currentIndex.validMove(destination)
-                if validMove
-                    #these should be character commands. ie. player.leave(room), player.enter(destination)
-                    currentIndex.leave()
-                    targetIndex.enter()
-                else
-                    console.log "Can't move to " + destination + " from " + currentRoom
+            validMove = currentIndex.validMove(destination)
+            if validMove
+                #these should be character commands. ie. player.leave(room), player.enter(destination)
+                currentIndex.leave()
+                targetIndex.enter()
             else
-                console.log region + " " + currentRoom + " " + targetRoom
-                
-        #return room.enter(destination)
-       
+                console.log "Can't move to " + destination + " from " + currentRoom
+        else
+            console.log region + " " + currentRoom + " " + targetRoom
+      
+    moveTo: (direction) ->
+        check(direction, String)
+
+        player = Characters.findOne({owner: this.userId})
+        if player?
+            room = Rooms.findOne({name: player.currentRoom})
+
+        if room? 
+            directions = {}
+            directions["north"] = room.north
+            directions["south"]= room.south
+            directions["east"] = room.east
+            directions["west"] = room.west
+
+        if not (direction of directions)
+            console.log "direction not valid"
+            return #early out
+        else if directions[direction]?
+            Meteor.call("enterRoom", directions[direction])
+        else
+            console.log "Dead End. Can't move to null location."
+
     print: () ->
         player = Characters.findOne({owner: this.userId})
         region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
