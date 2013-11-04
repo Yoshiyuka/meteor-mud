@@ -8,19 +8,23 @@ class Room
         for key, value of room_document
             @[key] = value
 
-        console.log "new room created: " + @.name + "!"
+        console.log "new room created: " + @name + "!"
     
     enter: () ->
         player = getPlayer()
         if player?
-            # Regions.update({'rooms.name': destination}, {$addToSet: {'rooms.$.players': {name: player.name}}})
-            #Messages.insert({text: player.name + " has entered the room.", broadcastTo: destination, sender: Meteor.userId(), timestamp: new Date().getTime()})
-            #Characters.update({owner: Meteor.userId()}, {$set: {currentRoom: destination}})
-            #Messages.insert({text: player.name + " has left the room.", broadcastTo: previousRoom, sender: player._id, timestamp: new Date().getTime()})
-            console.log @name + " has called enter()"
-
+            Rooms.update({name: @name}, {$addToSet: {players: player.name}})
+            console.log share.World.Time()
+            Messages.insert({text: player.name + " has entered the room.", broadcastTo: @name, sender: player._id, timestamp: share.World.Time()})
+            #Characters.update({owner: Meteor.userId()}, {$set: {currentRoom: destination}})#
+        console.log @name + " has called enter()"
 
     leave: () ->
+        player = getPlayer()
+        if player?
+            console.log share.World.Time()
+            Messages.insert({text: player.name + " has left the room.", broadcastTo: @name, sender: player._id, timestamp: share.World.Time()})
+
         console.log @name + " has called leave()"
 
     validMove: (destination) ->
@@ -77,7 +81,6 @@ class Region
                     @rooms[id] = room
 
                 changed: (id, fields) =>
-                    console.log @name + " had updated room: " + EJSON.stringify(fields)
                     @rooms[id].changed(fields)
             )
 

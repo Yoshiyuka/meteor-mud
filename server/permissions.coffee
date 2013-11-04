@@ -18,14 +18,23 @@ Meteor.publish("messages", (roomName, timestamp) ->
     else
         regionName = Rooms.findOne({name: roomName}).region
 
-    if not regionName? 
+    if not regionName?
+        console.log "fuck"
         this.error(new Meteor.Error(990, "Malformed or invalid region. Unable to subscribe to messages."))
         return #early out
         
     #broadcastTo: global -> all players will receive these messages in published data
     #broadcastTo: regionName -> only players in specified region will receive these messages in published data
     #broadcastTo: roomName -> only players in specified room will receive these messages in published data
+    msg = Messages.findOne()
+    if msg?
+        msgtimestamp = msg.timestamp
+    else
+        console.log "no message??"
+    console.log "player timestamp: " + timestamp
+    console.log "message timestamp: " + msgtimestamp
     return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }})
+    #return Messages.find({broadcastTo: {$in: [ "global", regionName, roomName ] }})
 )
 
 Meteor.publish("characters", ()->
@@ -117,7 +126,7 @@ Meteor.methods(
             console.log("no player")
         else
             if player.currentRoom isnt undefined
-                Messages.insert({text: player.name + " says: " + argument, broadcastTo: player.currentRoom, sender: this.userId, timestamp: share.World.Date.getTime()})
+                Messages.insert({text: player.name + " says: " + argument, broadcastTo: player.currentRoom, sender: this.userId, timestamp: share.World.Time()})
     
     yell: (argument) ->
         check(argument, String)
@@ -126,9 +135,9 @@ Meteor.methods(
         if not player?
             console.log("no player")
         else if player.currentRoom isnt undefined
-            region = Regions.findOne({'rooms.name': player.currentRoom}).name
+            region = Regions.findOne({'rooms': {$in: [player.currentRoom]}}).name
             if region isnt undefined
-                Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Date.getTime()})
+                Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Time()})
             else
                 console.log("unable to broadcast yell to region: " + region)
 )

@@ -1,7 +1,7 @@
 if Meteor.isServer
     share.World = {}
     share.World.Regions = {}
-    share.World.Date = new Date()
+    share.World.Time = () -> new Date().getTime()
 
     #cursor returned is not limited by publish method. This returns ALL regions in collection.
     regions = Regions.find()
@@ -31,9 +31,12 @@ if Meteor.isClient
 
             # TODO: Replace client-side session time to server-side session time to prevent players from setting
             # custom sessionStart times to retrieve messages from the past.
+            console.log player.currentRoom + " is the current room"
             Meteor.subscribe("messages", player.currentRoom, Session.get("sessionStart"), {
                 onError: (err) -> 
-                    console.log(err.error + " " + err.reason)
+                    console.log "it seems we have an error"
+                onReady: () ->
+                    console.log "messages are ready for: " + player.currentRoom
             })
     )
     ### HELPER FUNCTION ###
