@@ -26,15 +26,7 @@ Meteor.publish("messages", (roomName, timestamp) ->
     #broadcastTo: global -> all players will receive these messages in published data
     #broadcastTo: regionName -> only players in specified region will receive these messages in published data
     #broadcastTo: roomName -> only players in specified room will receive these messages in published data
-    msg = Messages.findOne()
-    if msg?
-        msgtimestamp = msg.timestamp
-    else
-        console.log "no message??"
-    console.log "player timestamp: " + timestamp
-    console.log "message timestamp: " + msgtimestamp
     return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }})
-    #return Messages.find({broadcastTo: {$in: [ "global", regionName, roomName ] }})
 )
 
 Meteor.publish("characters", ()->
@@ -66,7 +58,7 @@ Characters.deny({
 Meteor.methods(
     enterRoom: (destination) -> 
         check(destination, String)
-
+    
         player = Characters.findOne({owner: this.userId})
         if player? 
             #Find the region so we can index into the dictionary of room objects.
@@ -81,8 +73,12 @@ Meteor.methods(
             validMove = currentIndex.validMove(destination)
             if validMove
                 #these should be character commands. ie. player.leave(room), player.enter(destination)
-                currentIndex.leave()
                 targetIndex.enter()
+                currentIndex.leave()
+               
+                time = share.World.Time()
+                #return time of execution on success
+                return time
             else
                 console.log "Can't move to " + destination + " from " + currentRoom
         else
@@ -106,7 +102,13 @@ Meteor.methods(
             console.log "direction not valid"
             return #early out
         else if directions[direction]?
-            Meteor.call("enterRoom", directions[direction])
+            time = undefined
+            Meteor.call("enterRoom", directions[direction], (error, result) ->  
+                console.log result + " is the time in async callback"
+                time = result)
+            console.log "returned time: " + time
+            #return time of execution on success
+            return time
         else
             console.log "Dead End. Can't move to null location."
 

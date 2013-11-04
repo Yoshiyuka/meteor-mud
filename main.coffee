@@ -14,6 +14,8 @@ if Meteor.isServer
             console.log EJSON.stringify(fields)
 
 if Meteor.isClient
+    share.World = {}
+    share.World.Time = () -> new Date().getTime()
     Deps.autorun(()->
         Meteor.subscribe("characters", {
             onError: (err) -> 

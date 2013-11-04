@@ -14,15 +14,13 @@ class Room
         player = getPlayer()
         if player?
             Rooms.update({name: @name}, {$addToSet: {players: player.name}})
-            console.log share.World.Time()
             Messages.insert({text: player.name + " has entered the room.", broadcastTo: @name, sender: player._id, timestamp: share.World.Time()})
-            #Characters.update({owner: Meteor.userId()}, {$set: {currentRoom: destination}})#
+            Characters.update({owner: Meteor.userId()}, {$set: {currentRoom: @name}})
         console.log @name + " has called enter()"
 
     leave: () ->
         player = getPlayer()
         if player?
-            console.log share.World.Time()
             Messages.insert({text: player.name + " has left the room.", broadcastTo: @name, sender: player._id, timestamp: share.World.Time()})
 
         console.log @name + " has called leave()"
