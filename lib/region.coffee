@@ -6,25 +6,22 @@ class Room
     constructor: (room_document) ->
         @name = room_document.name
         console.log "new room created: " + @name + "!"
-        
-    enter: (destination) ->
-        check(destination, String)
-
+    
+    enter: () ->
         player = getPlayer()
         if player?
             # Regions.update({'rooms.name': destination}, {$addToSet: {'rooms.$.players': {name: player.name}}})
             #Messages.insert({text: player.name + " has entered the room.", broadcastTo: destination, sender: Meteor.userId(), timestamp: new Date().getTime()})
             #Characters.update({owner: Meteor.userId()}, {$set: {currentRoom: destination}})
             #Messages.insert({text: player.name + " has left the room.", broadcastTo: previousRoom, sender: player._id, timestamp: new Date().getTime()})
-            console.log @name + " has called enter(" + destination + ")"
-            return destination
+            console.log @name + " has called enter()"
 
 
     leave: () ->
-        player = getPlayer()
-        if player?
-            console.log "player found in Room.leave()"
+        console.log @name + " has called leave()"
 
+    validMove: (destination) ->
+        return true
     getPlayer = () ->
         player = Characters.findOne({owner: Meteor.userId()})
         if player? 

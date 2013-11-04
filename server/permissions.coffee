@@ -62,10 +62,21 @@ Meteor.methods(
         if player? 
             #Find the region so we can index into the dictionary of room objects.
             region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
-            room = Rooms.findOne({name: player.currentRoom})
-            
-            if region? and room?
-                share.World.Regions[region._id].rooms[room._id].enter(destination)
+            currentRoom = Rooms.findOne({name: player.currentRoom})
+            targetRoom = Rooms.findOne({name: destination})
+
+            if region? and currentRoom? and targetRoom?
+                currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
+                targetIndex = share.World.Regions[region._id].rooms[targetRoom._id]
+
+                validMove = currentIndex.validMove(destination)
+                if validMove
+                    currentIndex.leave()
+                    targetIndex.enter()
+                else
+                    console.log "Can't move to " + destination + " from " + currentRoom
+            else
+                console.log region + " " + currentRoom + " " + targetRoom
                 
         #return room.enter(destination)
 
