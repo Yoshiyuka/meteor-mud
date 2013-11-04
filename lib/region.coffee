@@ -4,8 +4,11 @@
 #-------------------------------------------------------------------------------------------------------------------------------#
 class Room
     constructor: (room_document) ->
-        @name = room_document.name
-        console.log "new room created: " + @name + "!"
+        #copy room_document fields to Room instance properties
+        for key, value of room_document
+            @[key] = value
+
+        console.log "new room created: " + @.name + "!"
     
     enter: () ->
         player = getPlayer()
@@ -22,6 +25,18 @@ class Room
 
     validMove: (destination) ->
         return true
+
+    print: () ->
+        console.log EJSON.stringify(@)
+    changed: (fields) ->
+        #update old properties with new from changed fields.
+        for key, value of fields
+            console.log "OLD: "
+            console.log @[key]
+            @[key] = value
+            console.log "NEW: "
+            console.log @[key]
+
     getPlayer = () ->
         player = Characters.findOne({owner: Meteor.userId()})
         if player? 
@@ -63,6 +78,7 @@ class Region
 
                 changed: (id, fields) =>
                     console.log @name + " had updated room: " + EJSON.stringify(fields)
+                    @rooms[id].changed(fields)
             )
 
 share.Region = Region

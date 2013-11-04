@@ -71,6 +71,7 @@ Meteor.methods(
 
                 validMove = currentIndex.validMove(destination)
                 if validMove
+                    #these should be character commands. ie. player.leave(room), player.enter(destination)
                     currentIndex.leave()
                     targetIndex.enter()
                 else
@@ -79,6 +80,14 @@ Meteor.methods(
                 console.log region + " " + currentRoom + " " + targetRoom
                 
         #return room.enter(destination)
+       
+    print: () ->
+        player = Characters.findOne({owner: this.userId})
+        region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
+        currentRoom = Rooms.findOne({name: player.currentRoom})
+
+        currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
+        currentIndex.print()
 
     say: (argument) -> 
         check(argument, String)
