@@ -26,7 +26,7 @@ Meteor.publish("messages", (roomName, timestamp) ->
     #broadcastTo: global -> all players will receive these messages in published data
     #broadcastTo: regionName -> only players in specified region will receive these messages in published data
     #broadcastTo: roomName -> only players in specified room will receive these messages in published data
-    return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }})
+    return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }, ignore: {$ne: this.userId}})
 )
 
 Meteor.publish("characters", ()->
