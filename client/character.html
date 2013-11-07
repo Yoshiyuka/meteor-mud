@@ -23,24 +23,37 @@
         {{/each}}
         </tbody>
     </table>
-    {{_id}}
-    <button id="bu">Click</button>
 </template>
 
 <template name="character">
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2">
-                <p>Left</p>
+    {{#with character}}
+    <div class="container">
+        <div class="col-sm-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{name}}'s Stats:
             </div>
-            <div class="span6">
-                <p>Center</p>
-            </div>
-            <div class="span2">
-                <p>{{test}}</p>
+            <div class="panel-body">
+                <div class="col-md-4">
+                    <p>HP:</p>
+                </div>
+                <div class="col-md-8">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{getHealthPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{getHealthPercentage}}%">
+                        </div>
+                        <span class="progress-bar-text">Test</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <p>LVL:</p>
+                </div>
+                <div class="col-md-8">
+                    <p>{{level}}</p>
+                </div>
             </div>
         </div>
-        {{character}}
     </div>
+    </div>
+    {{/with}}
 </template>
 

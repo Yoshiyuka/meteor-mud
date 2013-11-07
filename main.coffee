@@ -71,29 +71,30 @@ if Meteor.isClient
         @route 'notfound', path: '*'
     
     class @WorldController extends RouteController
-        @before: () ->
+        before: () ->
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
-        @action: () ->
+        action: () ->
             this.render()
 
     class @CharacterListController extends RouteController
-        @before: () ->
+        before: () ->
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
-        @action: () ->
+        action: () ->
             this.render()
 
     class @CharacterController extends RouteController
-        @before: () ->
+        before: () ->
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
-        @action: () =>
-            console.log this.params.id
-            this.render()
+            Session.set("characterId", this.params.id)
+        action: () =>
+            console.log this.params.id + " is supposed to be id"
+            this.render('character',{id: this.params.id})
 
     #Template.rooms.helpers(
     #    rooms: -> rooms
