@@ -19,7 +19,6 @@ Meteor.publish("messages", (roomName, timestamp) ->
         regionName = Rooms.findOne({name: roomName}).region
 
     if not regionName?
-        console.log "fuck"
         this.error(new Meteor.Error(990, "Malformed or invalid region. Unable to subscribe to messages."))
         return #early out
         

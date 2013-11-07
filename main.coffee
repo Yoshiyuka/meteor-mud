@@ -65,25 +65,35 @@ if Meteor.isClient
     Router.map ->
         @route 'home', path: '/'
         @route 'world', path: '/world', controller: @WorldController
-        @route 'character', path: '/character', controller: @CharacterController
-        #@route 'sign_in', path: '/sign-in'
+        @route 'character_list', path: '/characters', controller: @CharacterListController
+        @route 'character', path: '/characters/:id', controller: @CharacterController, data: {}
         @route 'create_account', path: '/create_account'
         @route 'notfound', path: '*'
     
     class @WorldController extends RouteController
-        onBeforeRun: () ->
+        @before: () ->
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
-        onBeforeRerun: () ->
-            @onBeforeRun()
+        @action: () ->
+            this.render()
+
+    class @CharacterListController extends RouteController
+        @before: () ->
+            if not Meteor.user()
+                this.render('sign_in')
+                this.stop()
+        @action: () ->
+            this.render()
+
     class @CharacterController extends RouteController
-        onBeforeRun: () -> 
+        @before: () ->
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
-        onBeforeRerun: () ->
-            @onBeforeRun()
+        @action: () =>
+            console.log this.params.id
+            this.render()
 
     #Template.rooms.helpers(
     #    rooms: -> rooms

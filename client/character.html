@@ -1,22 +1,46 @@
-<template name="character">
+<template name="character_list">
     <div class="container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Character</th>
-                    <th>Level</th>
-                    <th>Time Played</th>
-                </tr>
-            </thead>
-            <tbody>
-            {{#each characters}}
-                <tr>
-                    <td>{{name}}</td>
-                    <td>{{level}}</td>
-                    <td>{{time_played}}</td>
-                </tr>    
-            {{/each}}
-            </tbody>
-        </table>
+        {{> list}}
     </div>
 </template>
+
+<template name="list">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Character</th>
+                <th>Level</th>
+                <th>Time Played</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#each characters}}
+        <tr style="cursor: pointer;" data-id="{{_id}}">
+                <td>{{name}}</td>
+                <td>{{level}}</td>
+                <td>{{played}}</td>
+            </tr>    
+        {{/each}}
+        </tbody>
+    </table>
+    {{_id}}
+    <button id="bu">Click</button>
+</template>
+
+<template name="character">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2">
+                <p>Left</p>
+            </div>
+            <div class="span6">
+                <p>Center</p>
+            </div>
+            <div class="span2">
+                <p>{{test}}</p>
+            </div>
+        </div>
+        {{character}}
+    </div>
+</template>
+
