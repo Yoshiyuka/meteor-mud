@@ -17,6 +17,10 @@ textarea{
 .progress{
     position: relative;
 }
+.bar{
+    position: absolute; 
+    z-index: 1;
+}
 .progress-bar-text{
     position: absolute;
     z-index: 2;
@@ -25,6 +29,10 @@ textarea{
     width: 100%;
 }
 
+.list-heading{
+    text-align: center;
+    background-color: #DDD !important;
+}
 /*.red .active a, 
 .red .active a:hover,
 .red .active a:visited{

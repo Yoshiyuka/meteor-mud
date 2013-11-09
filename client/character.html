@@ -29,30 +29,112 @@
     {{#with character}}
     <div class="container">
         <div class="col-sm-3">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                {{name}}'s Stats:
-            </div>
-            <div class="panel-body">
-                <div class="col-md-4">
-                    <p>HP:</p>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{name}}'s Stats:
                 </div>
-                <div class="col-md-8">
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{getHealthPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{getHealthPercentage}}%">
-                        </div>
-                        <span class="progress-bar-text">Test</span>
+                <div class="panel-body">
+
+                    <!-- HEALTH BAR -->
+                    <div class="col-md-4">
+                        <p>HP:</p>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <p>LVL:</p>
-                </div>
-                <div class="col-md-8">
-                    <p>{{level}}</p>
+                    <div class="col-md-8">
+                        <div class="progress">
+                            <div class="bar progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{getHealthPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{getHealthPercentage}}%">
+                            </div>
+                            <span class="progress-bar-text">{{getHealthRatio}}</span>
+                        </div>
+                    </div>
+
+                    <!-- MANA BAR -->
+                    <div class="col-md-4">
+                        <p>MP:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="progress">
+                            <div class="bar progress-bar progress-bar-info" role="progressbar" aria-valuenow="{{getManaPercentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{getManaPercentage}}%">
+                            </div>
+                            <span class="progress-bar-text">{{getManaRatio}}</span>
+                        </div>
+                    </div>
+
+                    <!-- LEVEL / EXP BAR? -->
+                    <div class="col-md-4">
+                        <p>LVL:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p>{{level}}</p>
+                    </div>
+
+                    <!-- STAMINA -->
+                    <div class="col-md-4">
+                        <p>STA:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p>Stamina</p>
+                    </div>
+
+                    <!-- STRENGTH -->
+                    <div class="col-md-4">
+                        <p>STR:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p>Strength</p>
+                    </div>
+
+                    <!-- DEXTERITY -->
+                    <div class="col-md-4">
+                        <p>DEX:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p>Dexterity</p>
+                    </div>
+
+                    <!-- INTELLIGENCE -->
+                    <div class="col-md-4">
+                        <p>INT:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p>Intelligence</p>
+                    </div>
+
+                    <!-- CHARISMA -->
+                    <div class="col-md-4">
+                        <p>CHA:</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p>Charisma</p>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="col-sm-5">
+            <div class="panel-group" id="accordian">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span>{{name}}'s Skills:</span>
+                </div>
+                <!-- WEAPON SKILL LIST -->
+                <div class="panel-heading list-heading">
+                    <a href="#weapons" data-toggle="collapse" data-parent"#accordian">Weapons</a>
+                </div>
+                <div id="weapons" class="list-group collapse in">
+                    <a href="#" class="list-group-item"><span class="label label-warning pull-right">10/100</span> One-Hand Sword</a>
+                    <a href="#" class="list-group-item"><span class="label label-warning pull-right">1/100</span>Two-Hand Sword</a>
+                </div>
+                <!-- MAGIC SKILL LIST -->
+                <div class="panel-heading list-heading">
+                    <a href="#magic" data-toggle="collapse" data-parent"#accordian">Magic</a>
+                </div>
+                <div id="magic" class="list-group collapse in">
+                    <a href="#" class="list-group-item"><span class="label label-success pull-right">100/100</span> Conjuration</a>
+                    <a href="#" class="list-group-item"><span class="label label-warning pull-right">1/100</span>Evocation</a>
+                </div>
+            </div>
+        </div>
     </div>
     {{/with}}
 </template>

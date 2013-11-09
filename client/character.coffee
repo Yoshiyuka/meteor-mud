@@ -15,6 +15,12 @@ Template.character.character = () ->
     id = Session.get("characterId")
     return Characters.findOne({_id: id})
 
+Template.character.getHealthRatio = () ->
+    id = Session.get("characterId")
+    character = Characters.findOne({_id: id})
+    
+    return character.health + "/" + character.maxHealth
+
 Template.character.getHealthPercentage = () ->
     id = Session.get("characterId")
     character = Characters.findOne({_id: id})
@@ -22,4 +28,19 @@ Template.character.getHealthPercentage = () ->
     maxHealth = character.maxHealth
 
     result = (currentHealth/maxHealth) * 100
+    return result
+
+Template.character.getManaRatio = () ->
+    id = Session.get("characterId")
+    character = Characters.findOne({_id: id})
+
+    return character.mana + "/" + character.maxMana
+
+Template.character.getManaPercentage = () ->
+    id = Session.get("characterId")
+    character = Characters.findOne({_id: id})
+    currentMana = character.mana
+    maxMana = character.maxMana
+
+    result = (currentMana/maxMana) * 100
     return result

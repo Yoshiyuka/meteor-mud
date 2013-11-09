@@ -141,4 +141,17 @@ Meteor.methods(
                 Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Time()})
             else
                 console.log("unable to broadcast yell to region: " + region)
+
+#--------------------------------------------------------------------------------------------------------------------------------#
+# Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     #
+#--------------------------------------------------------------------------------------------------------------------------------#
+    setHealth: (argument) ->
+        player = Characters.findOne({owner: this.userId})
+        Characters.update({_id: player._id}, {$set: {health: argument}})
+
+    setMana: (argument) ->
+        player = Characters.findOne({owner: this.userId})
+        Characters.update({_id: player._id}, {$set: {mana: argument}})
+
+
 )
