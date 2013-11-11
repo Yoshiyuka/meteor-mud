@@ -111,7 +111,8 @@ if Meteor.isClient
     #            event.target.value = ""
     #})
 if Meteor.isServer
-    test = new share.Enemy("mogdor")
+    test = new share.Enemy({name: "Mogdor", hp: 100})
+    test.setCooldown(1)
     tick = setInterval(()->
         test.tick()
         clearInterval(this)

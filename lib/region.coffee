@@ -8,6 +8,9 @@ class Room
         for key, value of room_document
             @[key] = value
 
+        @npcs = {}
+        @loot = {}
+
         console.log "new room created: " + @name + "!"
     
     enter: () ->
@@ -38,6 +41,21 @@ class Room
             @[key] = value
             console.log "NEW: "
             console.log @[key]
+
+    tick: () ->
+        #if max room item count isn't met, try spawning max_item_count-N items.
+        if @items isnt undefined
+            for item in @items
+                @spawnEntity(item)
+
+    spawnEntities = () ->
+    spawnEntity: (entity) ->
+        roll = Random.fraction() * 101
+        if roll <= entity.spawnChance
+            item = Items.findOne({name: entity.name})
+            console.log "spawning: " + item.name + " in " + @name
+            @loot[item._id] = item
+        
 
     getPlayer = () ->
         player = Characters.findOne({owner: Meteor.userId()})
@@ -81,5 +99,14 @@ class Region
                 changed: (id, fields) =>
                     @rooms[id].changed(fields)
             )
+
+        Meteor.setInterval(
+            () =>  @tick()
+        , 5000)
+
+    tick: () ->
+        console.log "calling tick in region: " + @name
+        for id,room of @rooms
+            room.tick()
 
 share.Region = Region
