@@ -80,13 +80,13 @@
                 <div class="span12 text-center">
                     <ul class="nav nav-pills centered-pills" style="padding-top: 5px">
                         <li class="active">
-                            <a href="#" id="nav-home" onClick="Router.go('home', null, null, true);"><i class="glyphicon glyphicon-home"/>  Home</a>
+                        <a href="#" id="nav-home" onClick="Router.go('home', null, {replaceState:true});"><i class="glyphicon glyphicon-home"/>  Home</a>
                         </li>
                         <li>
-                            <a href="#world" id="nav-world" onClick="Router.go('world', null, null, true);"><i class="glyphicon glyphicon-globe"/>  World</a>
+                        <a href="#world" id="nav-world" onClick="Router.go('world', null, {replaceState: true});"><i class="glyphicon glyphicon-globe"/>  World</a>
                         </li>
                         <li>
-                            <a href="#character" id="nav-character" onClick="Router.go('character_list', null, null, true);"><i class="glyphicon glyphicon-user"/>  Character</a>
+                        <a href="#character" id="nav-character" onClick="Router.go('character_list', null, {replaceState: true});"><i class="glyphicon glyphicon-user"/>  Character</a>
                         </li>
                     </ul>
                 </div>
@@ -94,9 +94,6 @@
         </div>
     </nav>
     
-    <div id="sign-in" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
-        {{> sign_in}}
-    </div>
 </template>
 <template name="home">
 </template>

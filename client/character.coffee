@@ -4,7 +4,7 @@ Template.list.characters = () ->
 Template.list.events(
     'click tr' : (e, t) ->
         id = $(e.currentTarget).attr("data-id")
-        Router.go('character', {id: id})
+        Router.go('character', {id: id}, {replaceState: true})
 )
 
 Template.character.created = () ->
@@ -15,7 +15,11 @@ Template.character.created = () ->
 #    'click .list-heading': (e, t) ->
 #        header = t.find($(e.target).attr("href"))
 #        $(header).collapse('show')
-#)
+
+Template.character.events(
+    'click' : (e, t) ->
+        e.preventDefault()
+)
 Template.character.character = () ->
     id = Session.get("characterId")
     return Characters.findOne({_id: id})
