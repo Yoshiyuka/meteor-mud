@@ -117,22 +117,10 @@
                 <div class="panel-heading">
                     <span>{{name}}'s Skills:</span>
                 </div>
-                <!-- WEAPON SKILL LIST -->
-                <div class="panel-heading list-heading">
-                    <a href="#weapons" data-toggle="collapse" data-parent"#accordian">Weapons</a>
-                </div>
-                <div id="weapons" class="list-group collapse in">
-                    <a href="#" class="list-group-item"><span class="label label-warning pull-right">10/100</span> One-Hand Sword</a>
-                    <a href="#" class="list-group-item"><span class="label label-warning pull-right">1/100</span>Two-Hand Sword</a>
-                </div>
-                <!-- MAGIC SKILL LIST -->
-                <div class="panel-heading list-heading">
-                    <a href="#magic" data-toggle="collapse" data-parent"#accordian">Magic</a>
-                </div>
-                <div id="magic" class="list-group collapse in">
-                    <a href="#" class="list-group-item"><span class="label label-success pull-right">100/100</span> Conjuration</a>
-                    <a href="#" class="list-group-item"><span class="label label-warning pull-right">1/100</span>Evocation</a>
-                </div>
+                {{#each skillType}}
+                    {{{listSkillType type}}}
+                    {{{skills type}}}
+                {{/each}}
             </div>
         </div>
     </div>

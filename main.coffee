@@ -38,7 +38,7 @@ if Meteor.isClient
                 onError: (err) -> 
                     console.log "it seems we have an error"
                 onReady: () ->
-                    console.log "messages are ready for: " + player.currentRoom
+                    #console.log "messages are ready for: " + player.currentRoom
             })
     )
     ### HELPER FUNCTION ###
@@ -93,7 +93,7 @@ if Meteor.isClient
                 this.stop()
             Session.set("characterId", this.params.id)
         action: () =>
-            console.log this.params.id + " is supposed to be id"
+            #console.log this.params.id + " is supposed to be id"
             this.render('character',{id: this.params.id})
 
     #Template.rooms.helpers(
