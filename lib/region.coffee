@@ -101,7 +101,7 @@ class Region
             )
 
         Meteor.setInterval(
-            () =>  @tick()
+            () =>  #@tick()
         , 5000)
 
     tick: () ->

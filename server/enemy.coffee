@@ -1,5 +1,5 @@
 class Enemy extends share.Creature
-    constructor: (@name) ->
+    constructor: () ->
         super
 
     tick: () ->

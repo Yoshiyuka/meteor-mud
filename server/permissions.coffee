@@ -141,7 +141,12 @@ Meteor.methods(
                 Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Time()})
             else
                 console.log("unable to broadcast yell to region: " + region)
+    createCharacter: (name) ->
+        if Characters.findOne({name: name}) isnt undefined
+            console.log name + " already exists. Bailing early."
+            return
 
+        Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId})
 #--------------------------------------------------------------------------------------------------------------------------------#
 # Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     #
 #--------------------------------------------------------------------------------------------------------------------------------#

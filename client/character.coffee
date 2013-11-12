@@ -1,12 +1,29 @@
+#--------------------------------------------------------------------------------------------------------------------------------#
+# List template - Lists all characters currently associated with user's account. Provides character creation option.             #
+#--------------------------------------------------------------------------------------------------------------------------------#
 Template.list.characters = () -> 
     return Characters.find()
 
 Template.list.events(
-    'click tr' : (e, t) ->
+    'click #characters tr' : (e, t) ->
         id = $(e.currentTarget).attr("data-id")
-        Router.go('character', {id: id}, {replaceState: true})
-)
+        Router.go('character', {id: id}, {replaceState: false})
 
+    'click #createCharacter' : (e, t) ->
+        name = t.find('.form-control')
+        if $(name).val() isnt undefined
+            Meteor.call("createCharacter", $(name).val())
+    )
+
+Template.list.charactersLessThan = (maxCharacters) ->
+    numCharacters = Characters.find().count()
+    if numCharacters < maxCharacters
+        return true 
+    return false
+
+#--------------------------------------------------------------------------------------------------------------------------------#
+# Character template - Provides UI for viewing individual character's stats and skills.                                          #
+#--------------------------------------------------------------------------------------------------------------------------------#
 Template.character.created = () ->
 Template.character.events(
     'click' : (e, t) ->

@@ -5,7 +5,7 @@
 </template>
 
 <template name="list">
-    <table class="table table-hover">
+    <table id="characters" class="table table-hover">
         <thead>
             <tr>
                 <th>Character</th>
@@ -23,8 +23,39 @@
         {{/each}}
         </tbody>
     </table>
+    <table id="create" class="table">
+        <thead></thead>
+        <tbody>
+        <tr>
+            <td class="col-sm-2">
+            <td class="success col-sm-4"><input type="text" class="form-control" placeholder="Name"></td>
+            <td id="createCharacter" class="success col-sm-4" style="text-align: center; vertical-align: middle; cursor: pointer;">Create Character</td>
+            <td class="col-sm-2"></td>
+        </tr>
+        </tbody>
+    </table>
 </template>
 
+<!-- Character Creation Form/Page - Only needed if we're allowing traditional stat allocation. -->
+<template name="characterCreation">
+    <form class="form-inline" role="form">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Character Name">
+        </div>
+        <div class="checkbox">
+            <label>
+                Gender: 
+                M <input type="checkbox">
+                F <input type="checkbox">
+                T <input type="checkbox">
+                N <input type="checkbox">
+            </label>
+        </div>
+        <button type="submit" class="btn btn-success">Create Character</button>
+    </form>
+</template>
+
+<!-- Character Page - Displays information about specific character. -->
 <template name="character">
     {{#with character}}
     <div class="container">

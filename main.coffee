@@ -67,6 +67,7 @@ if Meteor.isClient
         @route 'world', path: '/world', controller: @WorldController
         @route 'character_list', path: '/characters', controller: @CharacterListController
         @route 'character', path: '/characters/:id', controller: @CharacterController, data: {}
+        @route 'characterCreation', path: '/character_creation', controller: @CharacterCreationController,
         @route 'create_account', path: '/create_account'
         @route 'notfound', path: '*'
     
@@ -95,6 +96,14 @@ if Meteor.isClient
         action: () =>
             #console.log this.params.id + " is supposed to be id"
             this.render('character',{id: this.params.id})
+
+    class @CharacterCreationController extends RouteController
+        before: () ->
+            if not Meteor.user()
+                this.render('sign_in')
+                this.stop()
+        action: () =>
+            this.render()
 
     #Template.rooms.helpers(
     #    rooms: -> rooms
