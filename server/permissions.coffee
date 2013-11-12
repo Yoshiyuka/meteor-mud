@@ -72,7 +72,7 @@ Meteor.methods(
     enterRoom: (destination) -> 
         check(destination, String)
     
-        player = Characters.findOne({owner: this.userId})
+        player = Characters.findOne({owner: this.userId, selected: 1})
         if player? 
             #Find the region so we can index into the dictionary of room objects.
             region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
@@ -100,7 +100,7 @@ Meteor.methods(
     moveTo: (direction) ->
         check(direction, String)
 
-        player = Characters.findOne({owner: this.userId})
+        player = Characters.findOne({owner: this.userId, selected: 1})
         if player?
             room = Rooms.findOne({name: player.currentRoom})
 
@@ -134,7 +134,7 @@ Meteor.methods(
     say: (argument) -> 
         check(argument, String)
         
-        player = Characters.findOne({owner: this.userId})
+        player = Characters.findOne({owner: this.userId, selected: 1})
         if not player?
             console.log("no player")
         else
@@ -144,7 +144,7 @@ Meteor.methods(
     yell: (argument) ->
         check(argument, String)
 
-        player = Characters.findOne({owner: this.userId})
+        player = Characters.findOne({owner: this.userId, selected: 1})
         if not player?
             console.log("no player")
         else if player.currentRoom isnt undefined
@@ -159,16 +159,22 @@ Meteor.methods(
             console.log name + " already exists. Bailing early."
             return
 
-        Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh"})
+        Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh", selected: 0})
+
+    selectCharacter: (id) ->
+        Characters.update({owner: this.userId}, {$set: {selected: 0}}, {multi: true})
+        Characters.update({_id: id, owner: this.userId}, {$set: {selected: 1}})
+
+
 #--------------------------------------------------------------------------------------------------------------------------------#
 # Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     #
 #--------------------------------------------------------------------------------------------------------------------------------#
     setHealth: (argument) ->
-        player = Characters.findOne({owner: this.userId})
+        player = Characters.findOne({owner: this.userId, selected: 1})
         Characters.update({_id: player._id}, {$set: {health: argument}})
 
     setMana: (argument) ->
-        player = Characters.findOne({owner: this.userId})
+        player = Characters.findOne({owner: this.userId, selected: 1})
         Characters.update({_id: player._id}, {$set: {mana: argument}})
 
 

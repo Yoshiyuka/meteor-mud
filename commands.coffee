@@ -20,7 +20,7 @@ Commands["/e"] = Commands["/east"]
 Commands["/w"] = Commands["/west"]
 Commands["/look"] = () ->
     #will want to generate a description on the fly later on
-    character = Characters.findOne({_id: Session.get("selectedCharacter"), owner: Meteor.userId()})
+    character = Characters.findOne({owner: Meteor.userId(), selected: 1})
     if character isnt undefined
         room = Rooms.findOne({name: character.currentRoom})
 
@@ -46,7 +46,7 @@ Commands["/look"] = () ->
                 else
                     exits+= ", " + directions[i]
 
-        LocalMessages.insert({text: "You are currently in " + room.name + ". " + exits })
+        LocalMessages.insert({text: "You are currently in " + room.name + ". " + exits + "."})
 Commands["/inspect"] = (argument) ->
     check(argument, String)
     console.log argument
