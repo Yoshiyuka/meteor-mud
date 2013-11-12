@@ -1,7 +1,7 @@
 Commands = {}
 
-Commands["/say"] = (argument) -> Meteor.call("say", argument, (error, result) -> )
-Commands["/yell"] = (argument) -> Meteor.call("yell", argument, (error, result) -> )
+Commands["/say"] = (argument) -> say(argument)
+Commands["/yell"] = (argument) -> yell(argument)
 Commands["/y"] = Commands["/yell"] #alias command for yell
 
 Commands["/go"] = (argument)  -> Meteor.call("enterRoom", argument, (error, result) -> Session.set("sessionStart", share.World.Time() ))
@@ -50,5 +50,28 @@ Commands["/look"] = () ->
 Commands["/inspect"] = (argument) ->
     check(argument, String)
     console.log argument
+
+say = (argument) -> 
+    check(argument, String)
+    
+    player = Characters.findOne({owner: Meteor.userId(), selected: 1})
+    if not player?
+        console.log("no player")
+    else
+        if player.currentRoom isnt undefined
+            Messages.insert({text: player.name + " says: " + argument, broadcastTo: player.currentRoom, sender: Meteor.userId(), timestamp: share.World.Time()})
+
+yell = (argument) ->
+    check(argument, String)
+
+    player = Characters.findOne({owner: Meteor.userId(), selected: 1})
+    if not player?
+        console.log("no player")
+    else if player.currentRoom isnt undefined
+        region = Regions.findOne({'rooms': {$in: [player.currentRoom]}}).name
+        if region isnt undefined
+            Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: Meteor.userId(), timestamp: share.World.Time()})
+        else
+            console.log("unable to broadcast yell to region: " + region)
 
 share.Commands = Commands

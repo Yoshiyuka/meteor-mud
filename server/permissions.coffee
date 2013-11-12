@@ -131,28 +131,6 @@ Meteor.methods(
         currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
         currentIndex.print()
 
-    say: (argument) -> 
-        check(argument, String)
-        
-        player = Characters.findOne({owner: this.userId, selected: 1})
-        if not player?
-            console.log("no player")
-        else
-            if player.currentRoom isnt undefined
-                Messages.insert({text: player.name + " says: " + argument, broadcastTo: player.currentRoom, sender: this.userId, timestamp: share.World.Time()})
-    
-    yell: (argument) ->
-        check(argument, String)
-
-        player = Characters.findOne({owner: this.userId, selected: 1})
-        if not player?
-            console.log("no player")
-        else if player.currentRoom isnt undefined
-            region = Regions.findOne({'rooms': {$in: [player.currentRoom]}}).name
-            if region isnt undefined
-                Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Time()})
-            else
-                console.log("unable to broadcast yell to region: " + region)
 
     createCharacter: (name) ->
         if Characters.findOne({name: name}) isnt undefined
