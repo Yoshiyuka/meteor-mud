@@ -103,9 +103,7 @@ Meteor.methods(
         else if directions[direction]?
             time = undefined
             Meteor.call("enterRoom", directions[direction], (error, result) ->  
-                console.log result + " is the time in async callback"
                 time = result)
-            console.log "returned time: " + time
             #return time of execution on success
             return time
         else

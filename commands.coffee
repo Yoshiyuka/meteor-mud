@@ -18,5 +18,37 @@ Commands["/n"] = Commands["/north"]
 Commands["/s"] = Commands["/south"]
 Commands["/e"] = Commands["/east"]
 Commands["/w"] = Commands["/west"]
+Commands["/look"] = () ->
+    #will want to generate a description on the fly later on
+    character = Characters.findOne({_id: Session.get("selectedCharacter"), owner: Meteor.userId()})
+    if character isnt undefined
+        room = Rooms.findOne({name: character.currentRoom})
+
+    if room isnt undefined
+        directions = []
+        if room.north isnt null
+            directions.push("north")
+        if room.south isnt null
+            directions.push("south")
+        if room.east isnt null
+            directions.push("east")
+        if room.west isnt null
+            directions.push("west")
+    
+        exits = ""
+        if directions.length < 2
+            exits = "There is an exit to the " + directions.shift()
+        else
+            exits = "There are exits to the " + directions.shift()
+            for i in [0..directions.length-1] by 1
+                if _i is directions.length - 1
+                    exits += ", and " + directions[i]
+                else
+                    exits+= ", " + directions[i]
+
+        LocalMessages.insert({text: "You are currently in " + room.name + ". " + exits })
+Commands["/inspect"] = (argument) ->
+    check(argument, String)
+    console.log argument
 
 share.Commands = Commands
