@@ -76,6 +76,11 @@ if Meteor.isClient
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
+            if Characters.findOne({owner: Meteor.userId()}) is undefined
+                #Router.go('character_list', null, {replaceState: true})
+                this.render('character_list')
+                this.stop()
+
         action: () ->
             this.render()
 

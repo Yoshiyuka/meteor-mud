@@ -36,6 +36,18 @@ Meteor.publish("characters", ()->
         this.error(new Meteor.Error(920, "User is unknown! Can't return character data."))
 )
 
+#Regions.allow({
+#    insert: (userId, doc) ->
+#        return true
+#    update: (userId, doc) ->
+#        return true
+#})
+#Rooms.allow({
+#    insert: (userId, doc) ->
+#        return true
+#    update: (userId, doc) ->
+#        return true
+#})
 Messages.allow({
     insert: (userId, doc) -> 
         return true
@@ -48,9 +60,11 @@ Characters.allow({
     remove: (userId, doc) ->
         return (userId and doc.owner is userId)
 })
+
 Characters.deny({
-    update: (userId, doc, fieldNames, modifier) -> 
-        return true #must deny all client side updates of character. Do updates server-side.
+    #deny updates by client. updates must be done through server-side code only.
+    update: (userId, doc) ->
+        return true
 })
 
 #Insert/Update/Remove Methods to keep specific database actions server-side only.
@@ -145,7 +159,7 @@ Meteor.methods(
             console.log name + " already exists. Bailing early."
             return
 
-        Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId})
+        Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh"})
 #--------------------------------------------------------------------------------------------------------------------------------#
 # Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     #
 #--------------------------------------------------------------------------------------------------------------------------------#

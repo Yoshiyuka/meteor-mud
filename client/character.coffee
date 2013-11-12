@@ -7,12 +7,13 @@ Template.list.characters = () ->
 Template.list.events(
     'click #characters tr' : (e, t) ->
         id = $(e.currentTarget).attr("data-id")
+        Session.set("selectedCharacter", id)
         Router.go('character', {id: id}, {replaceState: false})
 
     'click #createCharacter' : (e, t) ->
         name = t.find('.form-control')
         if $(name).val() isnt undefined
-            Meteor.call("createCharacter", $(name).val())
+            Meteor.call("createCharacter", $(name).val(), (error, result) -> Session.set("selectedCharacter", result))
     )
 
 Template.list.charactersLessThan = (maxCharacters) ->
