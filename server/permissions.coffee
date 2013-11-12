@@ -141,6 +141,7 @@ Meteor.methods(
                 Messages.insert({text: player.name + " yells: " + argument, broadcastTo: region, sender: this.userId, timestamp: share.World.Time()})
             else
                 console.log("unable to broadcast yell to region: " + region)
+
     createCharacter: (name) ->
         if Characters.findOne({name: name}) isnt undefined
             console.log name + " already exists. Bailing early."

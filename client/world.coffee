@@ -33,8 +33,9 @@ if Meteor.isClient
 
         sessionStart = Session.get("sessionStart")
 
-        messages = Messages.find({})
-        this.messagesHandle = messages.observeChanges({
+        serverMessages = Messages.find()
+        clientMessages = LocalMessages.find()
+        this.serverMessagesHandle = serverMessages.observeChanges({
             added: (id, message) ->
                 incoming = Session.get("incoming")
                 console.log("change detected: " + message.text)
@@ -47,10 +48,19 @@ if Meteor.isClient
                 #Session.set("incoming", incoming)
         })
 
+        this.clientMessagesHandle = clientMessages.observeChanges({
+            added: (id, message) ->
+                incoming = Session.get("incoming")
+                console.log "local change detected: " + message.text
+                incoming.push(message.text)
+                Session.set("incoming", incoming)
+        })
+
         this.autorun = undefined
 
     Template.world.destroyed = () ->
-        this.messagesHandle.stop()
+        this.serverMessagesHandle.stop()
+        this.clientMessagesHandle.stop()
         this.autorun.stop()
         Session.set("game_putput", new Array())
         Session.set("incoming", new Array())

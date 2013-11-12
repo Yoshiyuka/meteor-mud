@@ -22,7 +22,7 @@ if Meteor.isClient
                 console.log(err.error + " " + err.reason)
         })
 
-        player = Characters.findOne({owner: Meteor.userId()})
+        player = Characters.findOne({_id: Session.get("selectedCharacter"), owner: Meteor.userId()})
         if player?
             Meteor.subscribe("regions", player.currentRoom, {
                 onError: (err) -> console.log(err.error + " " + err.reason)
