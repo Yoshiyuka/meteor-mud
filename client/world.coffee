@@ -38,20 +38,15 @@ if Meteor.isClient
         this.serverMessagesHandle = serverMessages.observeChanges({
             added: (id, message) ->
                 incoming = Session.get("incoming")
-                console.log("change detected: " + message.text)
+                #console.log("change detected: " + message.text)
                 incoming.push(message.text)
                 Session.set("incoming", incoming)
-            #removed: (id) -> 
-                #incoming = Session.get("incoming")
-                #console.log("removed document: " + id)
-                #incoming.pop()
-                #Session.set("incoming", incoming)
         })
 
         this.clientMessagesHandle = clientMessages.observeChanges({
             added: (id, message) ->
                 incoming = Session.get("incoming")
-                console.log "local change detected: " + message.text
+                #console.log "local change detected: " + message.text
                 incoming.push(message.text)
                 Session.set("incoming", incoming)
         })

@@ -22,7 +22,27 @@ class Player extends share.Creature
                     console.log "subscribing to messages for " + @currentRoom
             })
 
+            selectedCursor = Meteor.users.find({_id: Meteor.userId()})
+            @selectedObserver = selectedCursor.observeChanges(
+                added: (id, fields) =>
+                    if fields.profile isnt undefined and fields.profile.selected isnt undefined
+                        character = Characters.findOne({_id: fields.profile.selected})
+                        @_populateData(character)
+                    else
+                        console.log "fields.profile or fields.profile.selected is undefined in added callback for @selectedObserver"
 
+                changed: (id, fields) =>
+                    if fields.profile isnt undefined and fields.profile.selected isnt undefined
+                        character = Characters.findOne({_id: fields.profile.selected})
+                        @_populateData(character)
+                    else
+                        console.log "fields.profile or fields.profile.selected is undefined in changed callback for @selectedObserver"
+            )
+
+    _populateData: (data) ->
+        console.log "populating data for Player class with: " + EJSON.stringify(data)
+        for key, value of data
+            @[key] = value
 
     tick: () =>
         super

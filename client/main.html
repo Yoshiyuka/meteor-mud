@@ -44,31 +44,19 @@
                 .emulateTransitionEnd(350)
                 [dimension](this.$element[0][scrollSize])
 
-          }
-          var setPill = function(e)
-          {  
-              var li = $(e).parent();
-              $(li).siblings().removeClass("active"); 
-              $(li).addClass("active"); 
-              localStorage.setItem("currentPill", $(e).attr("id"));
-          };
-         
-          var lastTab = localStorage.getItem("currentPill"); 
-          if(lastTab)
-          {
-             var tab = $("[id='" + lastTab + "']");
-             setPill(tab);
-          }
+            }
+
           $(".nav-pills > li > a").click(function(e){
-              setPill(this);
               e.preventDefault();
           });
-     });
+
+      });
  </script>
  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+    <input type="hidden" name="visit" id="visit" value="">
     {{> navigation}}
     <!--{{yield}}-->
 </body>

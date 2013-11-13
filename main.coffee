@@ -49,7 +49,7 @@ if Meteor.isClient
     ### BEGIN ROUTER LOGIC ###
 
     Router.map ->
-        @route 'home', path: '/'
+        @route 'home', path: '/', action: () -> setNavigationPill(this.path)
         @route 'world', path: '/world', controller: @WorldController
         @route 'character_list', path: '/characters', controller: @CharacterListController
         @route 'character', path: '/characters/:id', controller: @CharacterController, data: {}
@@ -67,6 +67,9 @@ if Meteor.isClient
                 this.stop()
 
         action: () ->
+            path = this.path
+            setNavigationPill(path)
+
             this.render()
 
     class @CharacterListController extends RouteController
@@ -75,6 +78,9 @@ if Meteor.isClient
                 this.render('sign_in')
                 this.stop()
         action: () ->
+            path = this.path
+            setNavigationPill(path)
+
             this.render()
 
     class @CharacterController extends RouteController
@@ -94,6 +100,20 @@ if Meteor.isClient
                 this.stop()
         action: () =>
             this.render()
+
+
+    setNavigationPill = (path) ->
+        switch path
+            when '/world'
+                pill = $("#nav-world")
+            when '/characters'
+                pill = $('#nav-character')
+            when '/'
+                pill = $('#nav-home')
+
+        li = $(pill).parent()
+        $(li).siblings().removeClass("active")
+        $(li).addClass("active")
 
     #Template.rooms.helpers(
     #    rooms: -> rooms

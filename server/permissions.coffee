@@ -144,7 +144,7 @@ Meteor.methods(
 
     selectCharacter: (id) ->
         check(id, String)
-        Meteor.users.update({_id: this.userId}, {$set: {selected: id}})
+        Meteor.users.update({_id: this.userId}, {$set: {profile: {selected: id}}})
 
 
 #--------------------------------------------------------------------------------------------------------------------------------#
