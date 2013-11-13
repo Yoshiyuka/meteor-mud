@@ -16,32 +16,17 @@ if Meteor.isServer
 if Meteor.isClient
     share.World = {}
     share.World.Time = () -> new Date().getTime()
-    Deps.autorun(()->
-        Meteor.subscribe("characters", {
-            onError: (err) -> 
-                console.log(err.error + " " + err.reason)
-        })
 
-        player = Characters.findOne({_id: Session.get("selectedCharacter"), owner: Meteor.userId()})
-        if player?
-            share.World.Player = new share.Player(player)
-            Meteor.subscribe("regions", player.currentRoom, {
-                onError: (err) -> console.log(err.error + " " + err.reason)
-                onReady: () ->
-                    region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
-                    Meteor.subscribe("rooms", region.name, {onError: (err) -> console.log(err.error + " " + err.reason)})
-            })
+    Meteor.subscribe("characters", {
+        onError: (err) ->
+            console.log err.error + " " + err.reason
+        onReady: () ->
+            selectedCharacterId = Meteor.user().profile.selected
+            character = Characters.findOne({_id: selectedCharacterId})
 
-            # TODO: Replace client-side session time to server-side session time to prevent players from setting
-            # custom sessionStart times to retrieve messages from the past.
-            console.log player.currentRoom + " is the current room"
-            Meteor.subscribe("messages", player.currentRoom, Session.get("sessionStart"), {
-                onError: (err) -> 
-                    console.log "it seems we have an error"
-                onReady: () ->
-                    #console.log "messages are ready for: " + player.currentRoom
-            })
-    )
+            if character isnt undefined
+                share.World.Player = new share.Player(character)
+    })
     ### HELPER FUNCTION ###
     okcancel_events = (selector) ->
         return 'keyup ' +selector+', keydown '+selector+', focusout '+selector

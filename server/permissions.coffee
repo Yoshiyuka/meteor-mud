@@ -36,6 +36,9 @@ Meteor.publish("characters", ()->
         this.error(new Meteor.Error(920, "User is unknown! Can't return character data."))
 )
 
+Meteor.publish("userData", () ->
+    return Meteor.users.find({_id: this.userId}, {fields: {'selected': 1}})
+)
 #Regions.allow({
 #    insert: (userId, doc) ->
 #        return true
@@ -140,8 +143,8 @@ Meteor.methods(
         Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh", selected: 0})
 
     selectCharacter: (id) ->
-        Characters.update({owner: this.userId}, {$set: {selected: 0}}, {multi: true})
-        Characters.update({_id: id, owner: this.userId}, {$set: {selected: 1}})
+        check(id, String)
+        Meteor.users.update({_id: this.userId}, {$set: {selected: id}})
 
 
 #--------------------------------------------------------------------------------------------------------------------------------#
@@ -154,6 +157,4 @@ Meteor.methods(
     setMana: (argument) ->
         player = Characters.findOne({owner: this.userId, selected: 1})
         Characters.update({_id: player._id}, {$set: {mana: argument}})
-
-
 )
