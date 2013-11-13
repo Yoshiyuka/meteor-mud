@@ -17,9 +17,8 @@ class Creature
         @cooldown = value
 
     say: (message) ->
-        console.log @name + " says " + message
         if @currentRoom  isnt undefined
-            Messages.insert({text: @name + " says: " + message, broadcastTo: @currentRoom, sender: @_id, timestamp: share.World.Time()})
+            Messages.insert({text: @name + " says: " + message, broadcastTo: @currentRoom, sender: @owner, timestamp: share.World.Time()})
         else
             console.log @_id + ": Can't say to room as currentRoom is undefined. Value: " + @currentRoom
 
@@ -28,7 +27,7 @@ class Creature
             region = Rooms.findOne({name: @currentRoom}).region
             
             if region isnt undefined
-                Messages.insert({text: @name + " yells: " + message, broadcastTo: region, sender: @_id, timestamp: share.World.Time()})
+                Messages.insert({text: @name + " yells: " + message, broadcastTo: region, sender: @owner, timestamp: share.World.Time()})
             else
                 console.log @_id + ": Can't yell to region as region is undefined. Value: " + region
         else
