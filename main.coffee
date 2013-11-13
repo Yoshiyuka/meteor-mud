@@ -24,6 +24,7 @@ if Meteor.isClient
 
         player = Characters.findOne({_id: Session.get("selectedCharacter"), owner: Meteor.userId()})
         if player?
+            share.World.Player = new share.Player(player)
             Meteor.subscribe("regions", player.currentRoom, {
                 onError: (err) -> console.log(err.error + " " + err.reason)
                 onReady: () ->
@@ -76,7 +77,7 @@ if Meteor.isClient
             if not Meteor.user()
                 this.render('sign_in')
                 this.stop()
-            if Characters.findOne({owner: Meteor.userId()}) is undefined
+            else if Characters.findOne({owner: Meteor.userId()}) is undefined
                 this.render('character_list')
                 this.stop()
 
@@ -124,9 +125,8 @@ if Meteor.isClient
     #            event.target.value = ""
     #})
 if Meteor.isServer
-    test = new share.Enemy({name: "Mogdor", hp: 100})
+    test = new share.Enemy({_id: "fake", name: "Mogdor", hp: 100, currentRoom: "Central Area of the Marsh"})
     test.setCooldown(1)
-    tick = setInterval(()->
-        test.tick()
-        clearInterval(this)
-    , 1000)
+    #tick = Meteor.setInterval(() =>
+    #   console.log "alright" 
+    # , 2000)

@@ -50,7 +50,7 @@ Meteor.publish("characters", ()->
 #})
 Messages.allow({
     insert: (userId, doc) -> 
-        return true
+        return userId and doc.sender is userId
 })
 
 Characters.allow({
