@@ -13,7 +13,13 @@ Template.list.events(
     'click #createCharacter' : (e, t) ->
         name = t.find('.form-control')
         if $(name).val() isnt undefined
-            Meteor.call("createCharacter", $(name).val(), (error, result) -> Meteor.call("selectCharacter", result, (error, result) ->))
+            Meteor.call("createCharacter", $(name).val(), (error, result) -> 
+                if error?
+                    alert error.error + "\n" + error.reason
+                else
+                    Meteor.call("selectCharacter", result, (error, result) ->
+                    )
+            )
     )
 
 Template.list.charactersLessThan = (maxCharacters) ->

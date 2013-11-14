@@ -124,9 +124,13 @@ Meteor.methods(
 
 
     createCharacter: (name) ->
+        check(name, String)
+        if name.length < 3 or name.length > 16
+            throw new Meteor.Error(8, "Invalid name length submitted to createCharacter method.")
+        if not /^[A-Za-z]+$/.test(name)
+            throw new Meteor.Error(9, "Name can only contain alphabetical characters.")
         if Characters.findOne({name: name}) isnt undefined
-            console.log name + " already exists. Bailing early."
-            return
+            throw new Meteor.Error(10, "Character already exists.")
 
         query = Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh", selected: 0})
 
