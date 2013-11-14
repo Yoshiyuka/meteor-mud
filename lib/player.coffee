@@ -34,7 +34,7 @@ class Player extends share.Creature
                         console.log @_id + " " + @owner
                         @playerObserver = playerCursor.observeChanges(
                             added: (id, fields) =>
-                                console.log "yo"
+                                @_populateData(fields)
                             changed: (id, fields) =>
                                 @_populateData(fields)
                         )
@@ -57,7 +57,7 @@ class Player extends share.Creature
                                     @_populateData(fields)
                             )
                         else
-                            console.log "well shit"
+                            console.log "playerObserver is invalid"
                     else
                         console.log "fields.profile or fields.profile.selected is undefined in changed callback for @selectedObserver"
             )
@@ -65,7 +65,6 @@ class Player extends share.Creature
 
     _populateData: (data) =>
         for key, value of data
-            console.log "Setting " + key + " to " + value
             @[key] = value
 
     moveTo: (direction) ->

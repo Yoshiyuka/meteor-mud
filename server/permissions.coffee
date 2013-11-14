@@ -28,16 +28,23 @@ Meteor.publish("messages", (roomName, timestamp) ->
     return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }, ignore: {$ne: this.userId}})
 )
 
-Meteor.publish("characters", ()->
-    user = Meteor.users.findOne(this.userId)
+Meteor.publish("characters", (userId)->
+    user = Meteor.users.findOne(userId)
     if user?
-        return Characters.find({owner: this.userId})
+        return Characters.find({owner: userId})
     else
         this.error(new Meteor.Error(920, "User is unknown! Can't return character data."))
 )
 
 Meteor.publish("userData", () ->
     return Meteor.users.find({_id: this.userId}, {fields: {'selected': 1}})
+)
+
+Accounts.onCreateUser((options, user) ->
+    user.profile = {}
+    user.profile.selected = undefined
+
+    return user
 )
 #Regions.allow({
 #    insert: (userId, doc) ->
@@ -121,7 +128,10 @@ Meteor.methods(
             console.log name + " already exists. Bailing early."
             return
 
-        Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh", selected: 0})
+        query = Characters.insert({name: name, skills: [], level: 1, vitality: 1, strength: 1, dexterity: 1, charisma: 1, intelligence: 1, luck: 1, health: 100, maxHealth: 100, mana: 100, maxMana: 100, played: 0, owner: this.userId, currentRoom: "Central Area of the Marsh", selected: 0})
+
+        console.log query
+        return query
 
     selectCharacter: (id) ->
         check(id, String)

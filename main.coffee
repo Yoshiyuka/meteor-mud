@@ -16,17 +16,23 @@ if Meteor.isServer
 if Meteor.isClient
     share.World = {}
     share.World.Time = () -> new Date().getTime()
-
-    Meteor.subscribe("characters", {
-        onError: (err) ->
-            console.log err.error + " " + err.reason
-        onReady: () ->
-            selectedCharacterId = Meteor.user().profile.selected
+    
+    Deps.autorun(()->
+        user = Meteor.user()
+        if user?
+            Meteor.subscribe("characters", user._id, {
+                onError: (err) ->
+                    console.log err.error + " " + err.reason
+                onReady: () ->
+               
+            })
+            selectedCharacterId = user.profile.selected
             character = Characters.findOne({_id: selectedCharacterId})
 
-            if character isnt undefined
+            if character?
+                console.log "creating player...."
                 share.World.Player = new share.Player(character)
-    })
+    )
     ### HELPER FUNCTION ###
     okcancel_events = (selector) ->
         return 'keyup ' +selector+', keydown '+selector+', focusout '+selector
