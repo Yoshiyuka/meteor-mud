@@ -72,59 +72,40 @@ Characters.deny({
 
 #Insert/Update/Remove Methods to keep specific database actions server-side only.
 Meteor.methods(
-    enterRoom: (destination) -> 
-        check(destination, String)
-    
-        player = Characters.findOne({owner: this.userId, selected: 1})
-        if player? 
-            #Find the region so we can index into the dictionary of room objects.
-            region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
-            currentRoom = Rooms.findOne({name: player.currentRoom})
-            targetRoom = Rooms.findOne({name: destination})
+    validateAndMove: (from, to) ->
+        check(from, String)
+        check(to, String)
 
-        if region? and currentRoom? and targetRoom?
-            currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
-            targetIndex = share.World.Regions[region._id].rooms[targetRoom._id]
-
-            validMove = currentIndex.validMove(destination)
-            if validMove
-                #these should be character commands. ie. player.leave(room), player.enter(destination)
-                targetIndex.enter()
-                currentIndex.leave()
-               
-                time = share.World.Time()
-                #return time of execution on success
-                return time
-            else
-                console.log "Can't move to " + destination + " from " + currentRoom
-        else
-            console.log region + " " + currentRoom + " " + targetRoom
-      
-    moveTo: (direction) ->
-        check(direction, String)
-
-        player = Characters.findOne({owner: this.userId, selected: 1})
+        console.log this.userId
+        console.log Meteor.user().profile.selected
+        player = Characters.findOne({_id: Meteor.user().profile.selected})
+        if player is undefined
+            console.log "oh shit"
         if player?
-            room = Rooms.findOne({name: player.currentRoom})
+            if from isnt player.currentRoom
+                throw new Meteor.Error(6,"Server's view of player's current room does not match Client's view. This move is not valid.")
+            
+            region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
+            currentRoom = Rooms.findOne({name: from})
+            targetRoom = Rooms.findOne({name: to})
+            console.log to
 
-        if room? 
-            directions = {}
-            directions["north"] = room.north
-            directions["south"]= room.south
-            directions["east"] = room.east
-            directions["west"] = room.west
+            if region? and currentRoom? and targetRoom?
+                currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
+                targetIndex = share.World.Regions[region._id].rooms[targetRoom._id]
 
-        if not (direction of directions)
-            console.log "direction not valid"
-            return #early out
-        else if directions[direction]?
-            time = undefined
-            Meteor.call("enterRoom", directions[direction], (error, result) ->  
-                time = result)
-            #return time of execution on success
-            return time
-        else
-            console.log "Dead End. Can't move to null location."
+                if not currentIndex.validMove(to)
+                    throw new Meteor.Error(7, "Destination: " + to + " doesn't seem to be connected to current room: " + from + ". This is an invalid move attempt.")
+                else
+
+                    targetIndex.enter()
+                    currentIndex.leave()
+
+                    time = share.World.Time()
+
+                    return time
+            else
+                console.log EJSON.stringify(region) + " " + EJSON.stringify(currentRoom) + " " + EJSON.stringify(targetRoom)
 
     print: () ->
         player = Characters.findOne({owner: this.userId})

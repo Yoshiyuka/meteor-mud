@@ -5,14 +5,10 @@ Commands["/yell"] = (argument) -> share.World.Player.yell(argument)
 Commands["/y"] = Commands["/yell"] #alias command for yell
 
 Commands["/go"] = (argument)  -> Meteor.call("enterRoom", argument, (error, result) -> Session.set("sessionStart", share.World.Time() ))
-Commands["/north"] = () ->
-    Meteor.call("moveTo", "north", (error, result) ->  Session.set("sessionStart", result))
-Commands["/south"] = () -> 
-    Meteor.call("moveTo", "south", (error, result) ->  Session.set("sessionStart", result))
-Commands["/east"] = () ->  
-    Meteor.call("moveTo", "east", (error, result) ->  Session.set("sessionStart", result) )
-Commands["/west"] = () ->  
-    Meteor.call("moveTo", "west", (error, result) ->   Session.set("sessionStart", result))
+Commands["/north"] = () -> share.World.Player.moveTo("north")
+Commands["/south"] = () -> share.World.Player.moveTo("south")
+Commands["/east"] = () ->  share.World.Player.moveTo("east")
+Commands["/west"] = () ->  share.World.Player.moveTo("west")
 #alias commands for cardinal direction movement
 Commands["/n"] = Commands["/north"]
 Commands["/s"] = Commands["/south"]

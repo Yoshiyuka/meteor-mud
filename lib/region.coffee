@@ -17,11 +17,12 @@ class Room
         player = getPlayer()
         if player?
             Rooms.update({name: @name}, {$addToSet: {players: player.name}})
-            Characters.update({owner: Meteor.userId()}, {$set: {currentRoom: @name}})
+            Characters.update({_id: player._id, owner: player.owner}, {$set: {currentRoom: @name}})
 
     leave: () ->
         player = getPlayer()
         if player?
+            Rooms.update({name: @name}, {$pull: {players: player.name}})
             Messages.insert({text: player.name + " has left the room.", broadcastTo: @name, ignore: player.owner, sender: player.owner, timestamp: share.World.Time()})
 
     validMove: (destination) ->
@@ -54,7 +55,7 @@ class Room
         
 
     getPlayer = () ->
-        player = Characters.findOne({owner: Meteor.userId()})
+        player = Characters.findOne({_id: Meteor.user().profile.selected, owner: Meteor.userId()})
         if player? 
             return player
         else
