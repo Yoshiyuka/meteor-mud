@@ -33,24 +33,6 @@ if Meteor.isClient
                 console.log "creating player...."
                 share.World.Player = new share.Player(character)
     )
-    ### HELPER FUNCTION ###
-    okcancel_events = (selector) ->
-        return 'keyup ' +selector+', keydown '+selector+', focusout '+selector
-
-    make_okcancel_handler = (options) ->
-        ok = options.ok or ()->
-        cancel = options.cancel or ()->
-
-        return (evt) ->
-            if evt.type is "keydown" and evt.which is 27
-                cancel.call(this, evt)
-            else if evt.type is "keyup" and evt.which is 13
-                value = String(evt.target.value or "")
-
-                if value
-                    ok.call(this, value, evt)
-                else
-                    cancel.call(this, evt)
 
     ### BEGIN ROUTER LOGIC ###
 
@@ -121,20 +103,6 @@ if Meteor.isClient
         $(li).siblings().removeClass("active")
         $(li).addClass("active")
 
-    #Template.rooms.helpers(
-    #    rooms: -> rooms
-    #)
-    ### BEGIN TEMPLATE LOGIC ###
-    # Template.entry.events = {}
-
-    #Template.entry.events[okcancel_events('#messageBox')] = make_okcancel_handler({
-    #    ok: (text, event) ->
-    #        nameEntry = $("#name").val()
-    #        if nameEntry
-    #            ts = Date.now() / 1000
-    #            Messages.insert({name: nameEntry, message: text, time: ts})
-    #            event.target.value = ""
-    #})
 if Meteor.isServer
     test = new share.Enemy({_id: "fake", name: "Mogdor", hp: 100, currentRoom: "Central Area of the Marsh"})
     test.setCooldown(1)

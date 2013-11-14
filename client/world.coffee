@@ -77,11 +77,20 @@ if Meteor.isClient
 
     Template.world.events({
         'click #submit' : (e, t) ->
-            canvas = t.find('#game_window')
-            input = $(t.find('#input_area'))
+                canvas = t.find('#game_window')
+                input = $(t.find('#input_area'))
             #Messages.insert({text: input.val(), broadcastTo: "global", sender: Meteor.userId()})
-            parseCommands(input.val())
-    })
+                parseCommands(input.val())
+
+        'keyup #input_area, keydown #input_area' : (e, t) ->
+            if e.type is "keyup" and e.which is 13
+                value = String(e.target.value or "")
+
+                if value
+                    parseCommands(value)
+                    e.target.value = ""
+        })
+
 
     parseCommands = (argument) ->
         check(argument, String)
