@@ -30,10 +30,57 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "client/character.coffee",
             "targetPath": "client/character",
             "pageTitle": "client/character",
-            "title": "character"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "character.coffee",
+                "slug": "charactercoffee",
+                "isFileHeader": true
+              },
+              "depth": 1,
+              "children": [
+                {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Character Selection List",
+                    "slug": "character-selection-list"
+                  },
+                  "depth": 3
+                }, {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Character Info",
+                    "slug": "character-info"
+                  },
+                  "depth": 3
+                }
+              ]
+            },
+            "title": "character.coffee"
           },
           "depth": 2,
-          "outline": []
+          "outline": [
+            {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Character Selection List",
+                "slug": "character-selection-list"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Character Info",
+                "slug": "character-info"
+              },
+              "depth": 3
+            }
+          ]
         }, {
           "type": "file",
           "data": {
@@ -51,10 +98,73 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "client/commands.coffee",
             "targetPath": "client/commands",
             "pageTitle": "client/commands",
-            "title": "commands"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "commands.coffee",
+                "slug": "commandscoffee",
+                "isFileHeader": true
+              },
+              "depth": 1,
+              "children": [
+                {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Communication Commands",
+                    "slug": "communication-commands"
+                  },
+                  "depth": 3
+                }, {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Movement Commands",
+                    "slug": "movement-commands"
+                  },
+                  "depth": 3
+                }, {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Alias Commands For Movement",
+                    "slug": "alias-commands-for-movement"
+                  },
+                  "depth": 3
+                }
+              ]
+            },
+            "title": "commands.coffee"
           },
           "depth": 2,
-          "outline": []
+          "outline": [
+            {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Communication Commands",
+                "slug": "communication-commands"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Movement Commands",
+                "slug": "movement-commands"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Alias Commands For Movement",
+                "slug": "alias-commands-for-movement"
+              },
+              "depth": 3
+            }
+          ]
         }, {
           "type": "file",
           "data": {
@@ -72,10 +182,57 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "client/signin.coffee",
             "targetPath": "client/signin",
             "pageTitle": "client/signin",
-            "title": "signin"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "signin.coffee",
+                "slug": "signincoffee",
+                "isFileHeader": true
+              },
+              "depth": 1,
+              "children": [
+                {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Sign In Form's Event Listener",
+                    "slug": "sign-in-forms-event-listener"
+                  },
+                  "depth": 3
+                }, {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Create Account Form's Event Listener",
+                    "slug": "create-account-forms-event-listener"
+                  },
+                  "depth": 3
+                }
+              ]
+            },
+            "title": "signin.coffee"
           },
           "depth": 2,
-          "outline": []
+          "outline": [
+            {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Sign In Form's Event Listener",
+                "slug": "sign-in-forms-event-listener"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Create Account Form's Event Listener",
+                "slug": "create-account-forms-event-listener"
+              },
+              "depth": 3
+            }
+          ]
         }, {
           "type": "file",
           "data": {
@@ -471,10 +628,73 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "server/permissions.coffee",
             "targetPath": "server/permissions",
             "pageTitle": "server/permissions",
-            "title": "permissions"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "permissions.coffee",
+                "slug": "permissionscoffee",
+                "isFileHeader": true
+              },
+              "depth": 1,
+              "children": [
+                {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Publish Methods",
+                    "slug": "publish-methods"
+                  },
+                  "depth": 3
+                }, {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Allow/Deny Methods",
+                    "slug": "allowdeny-methods"
+                  },
+                  "depth": 3
+                }, {
+                  "type": "heading",
+                  "data": {
+                    "level": 3,
+                    "title": "Meteor.methods",
+                    "slug": "meteormethods"
+                  },
+                  "depth": 3
+                }
+              ]
+            },
+            "title": "permissions.coffee"
           },
           "depth": 2,
-          "outline": []
+          "outline": [
+            {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Publish Methods",
+                "slug": "publish-methods"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Allow/Deny Methods",
+                "slug": "allowdeny-methods"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "Meteor.methods",
+                "slug": "meteormethods"
+              },
+              "depth": 3
+            }
+          ]
         }
       ]
     }

@@ -1,18 +1,19 @@
-<!DOCTYPE html><html lang="en"><head><title>server/permissions</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="server/permissions"><meta name="groc-project-path" content="server/permissions.coffee"><meta name="groc-github-url" content="https://github.com/Yoshiyuka/meteor-mud"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/Yoshiyuka/meteor-mud/blob/master/server/permissions.coffee">server/permissions.coffee</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;regions&quot;</span><span class="p">,</span> <span class="nf">(currentRoom) -&gt;</span>
+<!DOCTYPE html><html lang="en"><head><title>server/permissions</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="server/permissions"><meta name="groc-project-path" content="server/permissions.coffee"><meta name="groc-github-url" content="https://github.com/Yoshiyuka/meteor-mud"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/Yoshiyuka/meteor-mud/blob/master/server/permissions.coffee">server/permissions.coffee</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="permissionscoffee">permissions.coffee</h1>
+
+<p>Controls client ability to access and modify server data.</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="publish-methods">Publish Methods</h3>
+
+<hr /></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Regions publisher. Only returns a cursor to a region which contains the room provided in the 'currentRoom' parameter.</p></div></div><div class="code"><div class="wrapper"><span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;regions&quot;</span><span class="p">,</span> <span class="nf">(currentRoom) -&gt;</span>
     <span class="k">if</span> <span class="o">not</span> <span class="nx">currentRoom</span><span class="o">?</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">error</span> <span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">950</span><span class="p">,</span> <span class="s">&quot;argument to publish is null&quot;</span><span class="p">)</span>
     <span class="k">else</span>
         <span class="k">return</span> <span class="nx">Regions</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nv">rooms: </span><span class="p">{</span><span class="nv">$in: </span><span class="p">[</span><span class="nx">currentRoom</span><span class="p">]}})</span>
-<span class="p">)</span>
-
-<span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;rooms&quot;</span><span class="p">,</span> <span class="nf">(region) -&gt;</span>
+<span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Rooms publisher. Returns a cursor containing all rooms which are part of the region provided by the 'region' parameter.</p></div></div><div class="code"><div class="wrapper"><span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;rooms&quot;</span><span class="p">,</span> <span class="nf">(region) -&gt;</span>
     <span class="k">if</span> <span class="o">not</span> <span class="nx">region</span><span class="o">?</span> 
         <span class="k">this</span><span class="p">.</span><span class="nx">error</span> <span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">990</span><span class="p">,</span> <span class="s">&quot;Malformed or invalid region.&quot;</span><span class="p">)</span>
     <span class="k">else</span>
         <span class="k">return</span> <span class="nx">Rooms</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nv">region: </span><span class="nx">region</span><span class="p">})</span>
-<span class="p">)</span>
-
-<span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;messages&quot;</span><span class="p">,</span> <span class="nf">(roomName, timestamp) -&gt;</span>
+<span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Messsages publisher. Returns a cursor containing all messages that are more recent than 'timestamp' 
+and which the broadcastTo value of the message is global or matches either the region or room that the player is in. </p></div></div><div class="code"><div class="wrapper"><span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;messages&quot;</span><span class="p">,</span> <span class="nf">(roomName, timestamp) -&gt;</span>
     <span class="k">if</span> <span class="o">not</span> <span class="nx">roomName</span><span class="o">?</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">950</span><span class="p">,</span> <span class="s">&quot;argument to publish is null&quot;</span><span class="p">))</span>
     <span class="k">else</span>
@@ -21,14 +22,9 @@
     <span class="k">if</span> <span class="o">not</span> <span class="nx">regionName</span><span class="o">?</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">990</span><span class="p">,</span> <span class="s">&quot;Malformed or invalid region. Unable to subscribe to messages.&quot;</span><span class="p">))</span>
         <span class="k">return</span> <span class="c1">#early out</span>
-        
-    <span class="c1">#broadcastTo: global -&gt; all players will receive these messages in published data</span>
-    <span class="c1">#broadcastTo: regionName -&gt; only players in specified region will receive these messages in published data</span>
-    <span class="c1">#broadcastTo: roomName -&gt; only players in specified room will receive these messages in published data</span>
+        </div></div></div><div class="segment"><div class="code folded"><div class="wrapper marker"><span class="c1">    #  broadcastTo: global -> all players will receive these messages in published data</span></div><div class="wrapper">    <span class="c1">#  broadcastTo: global -&gt; all players will receive these messages in published data</span></div></div></div><div class="segment"><div class="code folded"><div class="wrapper marker"><span class="c1">    #  broadcastTo: regionName -> only players in specified region will receive these messages in published data</span></div><div class="wrapper">    <span class="c1">#  broadcastTo: regionName -&gt; only players in specified region will receive these messages in published data</span></div></div></div><div class="segment"><div class="code folded"><div class="wrapper marker"><span class="c1">    #  broadcastTo: roomName -> only players in specified room will receive these messages in published data</span></div><div class="wrapper">    <span class="c1">#  broadcastTo: roomName -&gt; only players in specified room will receive these messages in published data</span>
     <span class="k">return</span> <span class="nx">Messages</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nv">timestamp: </span><span class="p">{</span><span class="nv">$gt: </span><span class="nx">timestamp</span><span class="p">},</span> <span class="nv">broadcastTo: </span><span class="p">{</span><span class="nv">$in: </span><span class="p">[</span> <span class="s">&quot;global&quot;</span><span class="p">,</span> <span class="nx">regionName</span><span class="p">,</span> <span class="nx">roomName</span> <span class="p">]</span> <span class="p">},</span> <span class="nv">ignore: </span><span class="p">{</span><span class="nv">$ne: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">}})</span>
-<span class="p">)</span>
-
-<span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;characters&quot;</span><span class="p">,</span> <span class="nf">(userId)-&gt;</span>
+<span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Characters publisher. Returns a cursor containing all character documents belonging to the logged in user. </p></div></div><div class="code"><div class="wrapper"><span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;characters&quot;</span><span class="p">,</span> <span class="nf">(userId)-&gt;</span>
     <span class="nv">user = </span><span class="nx">Meteor</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">findOne</span><span class="p">(</span><span class="nx">userId</span><span class="p">)</span>
     <span class="k">if</span> <span class="nx">user</span><span class="o">?</span>
         <span class="k">return</span> <span class="nx">Characters</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nv">owner: </span><span class="nx">userId</span><span class="p">})</span>
@@ -38,44 +34,31 @@
 
 <span class="nx">Meteor</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&quot;userData&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="nf">-&gt;</span>
     <span class="k">return</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nv">_id: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">},</span> <span class="p">{</span><span class="nv">fields: </span><span class="p">{</span><span class="s">&#39;selected&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">}})</span>
-<span class="p">)</span>
+<span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="allowdeny-methods">Allow/Deny Methods</h3>
 
-<span class="nx">Accounts</span><span class="p">.</span><span class="nx">onCreateUser</span><span class="p">(</span><span class="nf">(options, user) -&gt;</span>
+<hr /></div></div><div class="code"><div class="wrapper"><span class="nx">Accounts</span><span class="p">.</span><span class="nx">onCreateUser</span><span class="p">(</span><span class="nf">(options, user) -&gt;</span>
     <span class="nv">user.profile = </span><span class="p">{}</span>
     <span class="nv">user.profile.selected = </span><span class="kc">undefined</span>
 
     <span class="k">return</span> <span class="nx">user</span>
-<span class="p">)</span>
-<span class="c1">#Regions.allow({</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>insert: (userId, doc) ->
-       return true
-   update: (userId, doc) ->
-       return true</p></div></div><div class="code"><div class="wrapper"><span class="c1">#})</span>
-<span class="c1">#Rooms.allow({</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>insert: (userId, doc) ->
-       return true
-   update: (userId, doc) ->
-       return true</p></div></div><div class="code"><div class="wrapper"><span class="c1">#})</span>
-<span class="nx">Messages</span><span class="p">.</span><span class="nx">allow</span><span class="p">({</span>
+<span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow settings for Messages collection.</p></div></div><div class="code"><div class="wrapper"><span class="nx">Messages</span><span class="p">.</span><span class="nx">allow</span><span class="p">({</span>
     <span class="nv">insert: </span><span class="nf">(userId, doc) -&gt;</span> 
         <span class="k">return</span> <span class="nx">userId</span> <span class="o">and</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">sender</span> <span class="o">is</span> <span class="nx">userId</span>
-<span class="p">})</span>
-
-<span class="nx">Characters</span><span class="p">.</span><span class="nx">allow</span><span class="p">({</span>
+<span class="p">})</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow settings for Characters collection.</p></div></div><div class="code"><div class="wrapper"><span class="nx">Characters</span><span class="p">.</span><span class="nx">allow</span><span class="p">({</span>
     <span class="nv">insert: </span><span class="nf">(userId, doc) -&gt;</span>
         <span class="k">return</span> <span class="p">(</span><span class="nx">userId</span> <span class="o">and</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">owner</span> <span class="o">is</span> <span class="nx">userId</span><span class="p">)</span>
 
     <span class="nv">remove: </span><span class="nf">(userId, doc) -&gt;</span>
         <span class="k">return</span> <span class="p">(</span><span class="nx">userId</span> <span class="o">and</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">owner</span> <span class="o">is</span> <span class="nx">userId</span><span class="p">)</span>
-<span class="p">})</span>
-
-<span class="nx">Characters</span><span class="p">.</span><span class="nx">deny</span><span class="p">({</span>
-    <span class="c1">#deny updates by client. updates must be done through server-side code only.</span>
-    <span class="nv">update: </span><span class="nf">(userId, doc) -&gt;</span>
+<span class="p">})</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Deny settings for Characters collection.</p></div></div><div class="code"><div class="wrapper"><span class="nx">Characters</span><span class="p">.</span><span class="nx">deny</span><span class="p">({</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>deny updates by client. <strong>updates must be done through server-side code only.</strong></p></div></div><div class="code"><div class="wrapper">    <span class="nv">update: </span><span class="nf">(userId, doc) -&gt;</span>
         <span class="k">return</span> <span class="kc">true</span>
-<span class="p">})</span>
+<span class="p">})</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="meteormethods">Meteor.methods</h3>
 
-<span class="c1">#Insert/Update/Remove Methods to keep specific database actions server-side only.</span>
-<span class="nx">Meteor</span><span class="p">.</span><span class="nx">methods</span><span class="p">(</span>
-    <span class="nv">validateAndMove: </span><span class="nf">(from, to) -&gt;</span>
+<p>Server methods callable from the client through Meteor.call("method_name", parameters, callback)</p>
+
+<hr /></div></div><div class="code"><div class="wrapper"><span class="nx">Meteor</span><span class="p">.</span><span class="nx">methods</span><span class="p">(</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li><strong>validateAndMove(String, String)</strong> - attempts to move currently selected character from one room to another. Checks to see if the move is valid before performing the move.</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="nv">validateAndMove: </span><span class="nf">(from, to) -&gt;</span>
         <span class="nx">check</span><span class="p">(</span><span class="nx">from</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
         <span class="nx">check</span><span class="p">(</span><span class="nx">to</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
 
@@ -99,27 +82,25 @@
 
                 <span class="k">if</span> <span class="o">not</span> <span class="nx">currentIndex</span><span class="p">.</span><span class="nx">validMove</span><span class="p">(</span><span class="nx">to</span><span class="p">)</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s">&quot;Destination: &quot;</span> <span class="o">+</span> <span class="nx">to</span> <span class="o">+</span> <span class="s">&quot; doesn&#39;t seem to be connected to current room: &quot;</span> <span class="o">+</span> <span class="nx">from</span> <span class="o">+</span> <span class="s">&quot;. This is an invalid move attempt.&quot;</span><span class="p">)</span>
-                <span class="k">else</span>
-
-                    <span class="nx">targetIndex</span><span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+                <span class="k">else</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>call Room.enter() and Room.leave() which not only updates the Rooms collection, but updates the Character collection as well. <br />
+This needs to be reconsidered and most definitely refactored. <strong>Rooms should not be responsible for character data!</strong></p></div></div><div class="code"><div class="wrapper">                    <span class="nx">targetIndex</span><span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
                     <span class="nx">currentIndex</span><span class="p">.</span><span class="nx">leave</span><span class="p">()</span>
 
                     <span class="nv">time = </span><span class="nx">share</span><span class="p">.</span><span class="nx">World</span><span class="p">.</span><span class="nx">Time</span><span class="p">()</span>
 
                     <span class="k">return</span> <span class="nx">time</span>
             <span class="k">else</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">EJSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">region</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">EJSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">currentRoom</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">EJSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">targetRoom</span><span class="p">)</span>
-
-    <span class="nv">print: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">EJSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">region</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">EJSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">currentRoom</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">EJSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">targetRoom</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li><strong>print(void)</strong> - Triggers dumping of values to server log. Debug function for developer. </li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="nv">print: </span><span class="p">()</span> <span class="nf">-&gt;</span>
         <span class="nv">player = </span><span class="nx">Characters</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">owner: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">})</span>
         <span class="nv">region = </span><span class="nx">Regions</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">rooms: </span><span class="p">{</span><span class="nv">$in: </span><span class="p">[</span><span class="nx">player</span><span class="p">.</span><span class="nx">currentRoom</span><span class="p">]}})</span>
         <span class="nv">currentRoom = </span><span class="nx">Rooms</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">name: </span><span class="nx">player</span><span class="p">.</span><span class="nx">currentRoom</span><span class="p">})</span>
 
         <span class="nv">currentIndex = </span><span class="nx">share</span><span class="p">.</span><span class="nx">World</span><span class="p">.</span><span class="nx">Regions</span><span class="p">[</span><span class="nx">region</span><span class="p">.</span><span class="nx">_id</span><span class="p">].</span><span class="nx">rooms</span><span class="p">[</span><span class="nx">currentRoom</span><span class="p">.</span><span class="nx">_id</span><span class="p">]</span>
-        <span class="nx">currentIndex</span><span class="p">.</span><span class="nx">print</span><span class="p">()</span>
-
-
-    <span class="nv">createCharacter: </span><span class="nf">(name) -&gt;</span>
+        <span class="nx">currentIndex</span><span class="p">.</span><span class="nx">print</span><span class="p">()</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li><strong>createCharacter(String)</strong> - Creates a new character document in the Characters collection with some pre-determined values. </li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="nv">createCharacter: </span><span class="nf">(name) -&gt;</span>
         <span class="nx">check</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
         <span class="k">if</span> <span class="nx">name</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="o">or</span> <span class="nx">name</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">16</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s">&quot;Invalid name length submitted to createCharacter method.&quot;</span><span class="p">)</span>
@@ -131,15 +112,12 @@
         <span class="nv">query = </span><span class="nx">Characters</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="nv">name: </span><span class="nx">name</span><span class="p">,</span> <span class="nv">skills: </span><span class="p">[],</span> <span class="nv">level: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">vitality: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">strength: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">dexterity: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">charisma: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">intelligence: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">luck: </span><span class="mi">1</span><span class="p">,</span> <span class="nv">health: </span><span class="mi">100</span><span class="p">,</span> <span class="nv">maxHealth: </span><span class="mi">100</span><span class="p">,</span> <span class="nv">mana: </span><span class="mi">100</span><span class="p">,</span> <span class="nv">maxMana: </span><span class="mi">100</span><span class="p">,</span> <span class="nv">played: </span><span class="mi">0</span><span class="p">,</span> <span class="nv">owner: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">,</span> <span class="nv">currentRoom: </span><span class="s">&quot;Central Area of the Marsh&quot;</span><span class="p">,</span> <span class="nv">selected: </span><span class="mi">0</span><span class="p">})</span>
 
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">query</span>
-        <span class="k">return</span> <span class="nx">query</span>
-
-    <span class="nv">selectCharacter: </span><span class="nf">(id) -&gt;</span>
+        <span class="k">return</span> <span class="nx">query</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li><strong>selectCharacter(String)</strong> - Sets the user's 'selected' field to the specified id. This triggers changes which observers watching this field will see. 
+This will cause the observers to force updates on objects which depend on the data of the document matching the selected id.</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="nv">selectCharacter: </span><span class="nf">(id) -&gt;</span>
         <span class="nx">check</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
-        <span class="nx">Meteor</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="nv">_id: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">},</span> <span class="p">{</span><span class="nv">$set: </span><span class="p">{</span><span class="nv">profile: </span><span class="p">{</span><span class="nv">selected: </span><span class="nx">id</span><span class="p">}}})</span>
-
-
-<span class="c1">#--------------------------------------------------------------------------------------------------------------------------------#</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     #</p></div></div><div class="code"><div class="wrapper"><span class="c1">#--------------------------------------------------------------------------------------------------------------------------------#</span>
-    <span class="nv">setHealth: </span><span class="nf">(argument) -&gt;</span>
+        <span class="nx">Meteor</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="nv">_id: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">},</span> <span class="p">{</span><span class="nv">$set: </span><span class="p">{</span><span class="nv">profile: </span><span class="p">{</span><span class="nv">selected: </span><span class="nx">id</span><span class="p">}}})</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     </p></div></div><div class="code"><div class="wrapper">    <span class="nv">setHealth: </span><span class="nf">(argument) -&gt;</span>
         <span class="nv">player = </span><span class="nx">Characters</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">owner: </span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">,</span> <span class="nv">selected: </span><span class="mi">1</span><span class="p">})</span>
         <span class="nx">Characters</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="nv">_id: </span><span class="nx">player</span><span class="p">.</span><span class="nx">_id</span><span class="p">},</span> <span class="p">{</span><span class="nv">$set: </span><span class="p">{</span><span class="nv">health: </span><span class="nx">argument</span><span class="p">}})</span>
 
