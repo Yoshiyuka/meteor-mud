@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><title>lib/region</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="lib/region"><meta name="groc-project-path" content="lib/region.coffee"><meta name="groc-github-url" content="https://github.com/Yoshiyuka/meteor-mud"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/Yoshiyuka/meteor-mud/blob/master/lib/region.coffee">lib/region.coffee</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h2 id="room">Room</h2>
+
+<hr />
+
+<p>A Room is the smallest building block of a Region. Connects to up to 4 other Rooms (North/South/East/West). 
+Connect one of these directions to a Portal room type to provide a wider range of rooms to jump to.                           </p></div></div><div class="code"><div class="wrapper"><span class="k">class</span> <span class="nx">Room</span>
+    <span class="nv">constructor: </span><span class="nf">(room_document) -&gt;</span>
+        <span class="c1">#copy room_document fields to Room instance properties</span>
+        <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">room_document</span>
+            <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+
+        <span class="vi">@npcs = </span><span class="p">{}</span>
+        <span class="vi">@loot = </span><span class="p">{}</span>
+
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;new room created: &quot;</span> <span class="o">+</span> <span class="nx">@name</span> <span class="o">+</span> <span class="s">&quot;!&quot;</span>
+    
+    <span class="nv">enter: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+        <span class="nv">player = </span><span class="nx">getPlayer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">player</span><span class="o">?</span>
+            <span class="nx">Rooms</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="nv">name: </span><span class="nx">@name</span><span class="p">},</span> <span class="p">{</span><span class="nv">$addToSet: </span><span class="p">{</span><span class="nv">players: </span><span class="nx">player</span><span class="p">.</span><span class="nx">name</span><span class="p">}})</span>
+            <span class="nx">Characters</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="nv">_id: </span><span class="nx">player</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="nv">owner: </span><span class="nx">player</span><span class="p">.</span><span class="nx">owner</span><span class="p">},</span> <span class="p">{</span><span class="nv">$set: </span><span class="p">{</span><span class="nv">currentRoom: </span><span class="nx">@name</span><span class="p">}})</span>
+
+    <span class="nv">leave: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+        <span class="nv">player = </span><span class="nx">getPlayer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">player</span><span class="o">?</span>
+            <span class="nx">Rooms</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="nv">name: </span><span class="nx">@name</span><span class="p">},</span> <span class="p">{</span><span class="nv">$pull: </span><span class="p">{</span><span class="nv">players: </span><span class="nx">player</span><span class="p">.</span><span class="nx">name</span><span class="p">}})</span>
+            <span class="nx">Messages</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="nv">text: </span><span class="nx">player</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot; has left the room.&quot;</span><span class="p">,</span> <span class="nv">broadcastTo: </span><span class="nx">@name</span><span class="p">,</span> <span class="nv">ignore: </span><span class="nx">player</span><span class="p">.</span><span class="nx">owner</span><span class="p">,</span> <span class="nv">sender: </span><span class="nx">player</span><span class="p">.</span><span class="nx">owner</span><span class="p">,</span> <span class="nv">timestamp: </span><span class="nx">share</span><span class="p">.</span><span class="nx">World</span><span class="p">.</span><span class="nx">Time</span><span class="p">()})</span>
+
+    <span class="nv">validMove: </span><span class="nf">(destination) -&gt;</span>
+        <span class="k">return</span> <span class="kc">true</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>changed(Object)</strong> - Update old properties with new from changed fields.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">changed: </span><span class="nf">(fields) -&gt;</span>
+        <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">fields</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;OLD: &quot;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+            <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;NEW: &quot;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>tick(void)</strong> - Update function. Reduces cooldown count and executues queued (if any) functions.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">tick: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+        <span class="c1">#if max room item count isn&#39;t met, try spawning max_item_count-N items.</span>
+        <span class="k">if</span> <span class="nx">@items</span> <span class="o">isnt</span> <span class="kc">undefined</span>
+            <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">@items</span>
+                <span class="nx">@spawnEntity</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span>
+
+    <span class="nv">spawnEntities = </span><span class="p">()</span> <span class="nf">-&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>spawnEntity(Object)</strong> - Given an object, roll dice to see if we should add the object data to our loot array. 
+<strong>In the future this will actually do something useful and handle spawning of enemies, items, and things such as temporary doors.</strong></p></div></div><div class="code"><div class="wrapper">    <span class="nv">spawnEntity: </span><span class="nf">(entity) -&gt;</span>
+        <span class="nv">roll = </span><span class="nx">Random</span><span class="p">.</span><span class="nx">fraction</span><span class="p">()</span> <span class="o">*</span> <span class="mi">101</span>
+        <span class="k">if</span> <span class="nx">roll</span> <span class="o">&lt;=</span> <span class="nx">entity</span><span class="p">.</span><span class="nx">spawnChance</span>
+            <span class="nv">item = </span><span class="nx">Items</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">name: </span><span class="nx">entity</span><span class="p">.</span><span class="nx">name</span><span class="p">})</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;spawning: &quot;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot; in &quot;</span> <span class="o">+</span> <span class="nx">@name</span>
+            <span class="nx">@loot</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">_id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span>
+        
+
+    <span class="nv">getPlayer = </span><span class="p">()</span> <span class="nf">-&gt;</span>
+        <span class="nv">player = </span><span class="nx">Characters</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">_id: </span><span class="nx">Meteor</span><span class="p">.</span><span class="nx">user</span><span class="p">().</span><span class="nx">profile</span><span class="p">.</span><span class="nx">selected</span><span class="p">,</span> <span class="nv">owner: </span><span class="nx">Meteor</span><span class="p">.</span><span class="nx">userId</span><span class="p">()})</span>
+        <span class="k">if</span> <span class="nx">player</span><span class="o">?</span> 
+            <span class="k">return</span> <span class="nx">player</span>
+        <span class="k">else</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="k">new</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nb">Error</span><span class="p">(</span><span class="mi">930</span><span class="p">,</span> <span class="s">&quot;No characters owned by user.&quot;</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="portal">Portal</h2>
+
+<hr />
+
+<p>A Portal is a Room that has more than 4 possible exits (North/West/South/East) and can exit into any other room
+(even to itself)                                                                                                              </p></div></div><div class="code"><div class="wrapper"><span class="k">class</span> <span class="nx">Portal</span> <span class="k">extends</span> <span class="nx">Room</span>
+    <span class="nv">constructor: </span><span class="nf">(portal_document) -&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;portal created&quot;</span>
+
+    <span class="nv">enter: </span><span class="nf">(destination) -&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;entering &quot;</span> <span class="o">+</span> <span class="nx">destination</span> <span class="o">+</span> <span class="s">&quot; via portal!&quot;</span>
+        <span class="k">super</span> <span class="nx">destination</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="region">Region</h2>
+
+<hr />
+
+<p>A Region is the (current) largest abstraction of the world. It is composed of a series of Rooms. Controls World macro-effects
+Such as Weather, Factions, Currency, Language, etc. across all contained Rooms. Rooms can override these values.              </p></div></div><div class="code"><div class="wrapper"><span class="k">class</span> <span class="nx">Region</span>
+    <span class="nv">constructor: </span><span class="nf">(region_document) -&gt;</span>
+        <span class="k">if</span> <span class="nx">region_document</span><span class="p">.</span><span class="nx">name</span><span class="o">?</span>
+            <span class="vi">@name = </span><span class="nx">region_document</span><span class="p">.</span><span class="nx">name</span>
+            <span class="vi">@roomCursor = </span><span class="nx">Rooms</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="nv">region: </span><span class="nx">@name</span><span class="p">})</span>
+            <span class="vi">@rooms = </span><span class="p">{}</span>
+            <span class="vi">@roomObserver = </span><span class="nx">@roomCursor</span><span class="p">.</span><span class="nx">observeChanges</span><span class="p">(</span>
+                <span class="nv">added: </span><span class="nf">(id, fields) =&gt;</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@name</span> <span class="o">+</span> <span class="s">&quot; has added a new room: &quot;</span> <span class="o">+</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">name</span>
+                    <span class="k">if</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&quot;portal&quot;</span>
+                        <span class="nv">room = </span><span class="k">new</span> <span class="nx">Portal</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span>
+                    <span class="k">else</span>
+                        <span class="nv">room = </span><span class="k">new</span> <span class="nx">Room</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span>
+
+                    <span class="nx">@rooms</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">room</span>
+
+                <span class="nv">changed: </span><span class="nf">(id, fields) =&gt;</span>
+                    <span class="nx">@rooms</span><span class="p">[</span><span class="nx">id</span><span class="p">].</span><span class="nx">changed</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span>
+            <span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>World update loop. Fires region's tick method.
+Each tick triggers the tick methods of every room in the region which, in turn, triggers the tick methods of all creatures, entities, etc. which are in each room.</strong></p></div></div><div class="code"><div class="wrapper">        <span class="nx">Meteor</span><span class="p">.</span><span class="nx">setInterval</span><span class="p">(</span>
+            <span class="p">()</span> <span class="o">=&gt;</span>  <span class="c1">#@tick()</span>
+        <span class="p">,</span> <span class="mi">5000</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>tick(void)</strong> - Region's update method. Triggers a cascade of ticks across all rooms and their entities.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">tick: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;calling tick in region: &quot;</span> <span class="o">+</span> <span class="nx">@name</span>
+        <span class="k">for</span> <span class="nx">id</span><span class="p">,</span><span class="nx">room</span> <span class="k">of</span> <span class="nx">@rooms</span>
+            <span class="nx">room</span><span class="p">.</span><span class="nx">tick</span><span class="p">()</span>
+
+<span class="nv">share.Region = </span><span class="nx">Region</span></div></div></div></div></body></html>
