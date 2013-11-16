@@ -352,6 +352,80 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         }
       ]
     }, {
+      "type": "file",
+      "data": {
+        "language": {
+          "nameMatchers": [".coffee", "Cakefile"],
+          "pygmentsLexer": "coffee-script",
+          "multiLineComment": ["###*", " *", " ###", "###", "#", "###"],
+          "strictMultiLineEnd": false,
+          "singleLineComment": ["#"],
+          "ignorePrefix": "}",
+          "foldPrefix": "^",
+          "name": "CoffeeScript"
+        },
+        "sourcePath": "/home/hakubi/projects/webchat/main.coffee",
+        "projectPath": "main.coffee",
+        "targetPath": "main",
+        "pageTitle": "main",
+        "title": "main"
+      },
+      "depth": 1,
+      "outline": [
+        {
+          "type": "heading",
+          "data": {
+            "level": 2,
+            "title": "Server-Side Code",
+            "slug": "server-side-code"
+          },
+          "depth": 2
+        }, {
+          "type": "heading",
+          "data": {
+            "level": 2,
+            "title": "Client-Side Code",
+            "slug": "client-side-code"
+          },
+          "depth": 2
+        }, {
+          "type": "heading",
+          "data": {
+            "level": 2,
+            "title": "Router Logic",
+            "slug": "router-logic"
+          },
+          "depth": 2,
+          "children": [
+            {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "WorldController:",
+                "slug": "worldcontroller"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "CharacterListController:",
+                "slug": "characterlistcontroller"
+              },
+              "depth": 3
+            }, {
+              "type": "heading",
+              "data": {
+                "level": 3,
+                "title": "CharacterController:",
+                "slug": "charactercontroller"
+              },
+              "depth": 3
+            }
+          ]
+        }
+      ]
+    }, {
       "type": "folder",
       "data": {
         "path": "server",

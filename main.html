@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en"><head><title>main</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="main"><meta name="groc-project-path" content="main.coffee"><meta name="groc-github-url" content="https://github.com/Yoshiyuka/meteor-mud"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/Yoshiyuka/meteor-mud/blob/master/main.coffee">main.coffee</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h2 id="server-side-code">Server-Side Code</h2>
+
+<hr />
+
+<p><strong>On start, set up the World as the server needs to see it to keep all players synced up properly.</strong></p></div></div><div class="code"><div class="wrapper"><span class="k">if</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">isServer</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Server-wide World object shared across all CoffeeScript files.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">share.World = </span><span class="p">{}</span>
+    <span class="nv">share.World.Regions = </span><span class="p">{}</span>
+    <span class="nv">share.World.Time = </span><span class="p">()</span> <span class="nf">-&gt;</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span>
+
+    <span class="nv">regions = </span><span class="nx">Regions</span><span class="p">.</span><span class="nx">find</span><span class="p">()</span>
+    <span class="c1">#An observer which generates Region instances which represent the game world. Automatically updates when changes to the database are detected.</span>
+    <span class="nx">regions</span><span class="p">.</span><span class="nx">observeChanges</span>
+        <span class="nv">added: </span><span class="nf">(id, fields) -&gt;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;added: &quot;</span> <span class="o">+</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">name</span>
+            <span class="nv">region = </span><span class="k">new</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Region</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span>
+            <span class="nx">share</span><span class="p">.</span><span class="nx">World</span><span class="p">.</span><span class="nx">Regions</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">region</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="client-side-code">Client-Side Code</h2>
+
+<hr />
+
+<p><strong>On start, set up the World as the client needs to see it. Create an instance of the Player for the client. Initialize routes for handling page redirection.</strong></p></div></div><div class="code"><div class="wrapper"><span class="k">if</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">isClient</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Client-wide World object shared across all CoffeeScript files</p></div></div><div class="code"><div class="wrapper">    <span class="nv">share.World = </span><span class="p">{}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set client time on startup. Used as a check against server time.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">share.World.Time = </span><span class="p">()</span> <span class="nf">-&gt;</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span>
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Automatically run these functions. Code will re-run when data it depends is detected as changed.</p></div></div><div class="code"><div class="wrapper">    <span class="nx">Deps</span><span class="p">.</span><span class="nx">autorun</span><span class="p">(()</span><span class="nf">-&gt;</span>
+        <span class="nv">user = </span><span class="nx">Meteor</span><span class="p">.</span><span class="nx">user</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">user</span><span class="o">?</span>
+            <span class="c1">#Get all of the characters belonging to the current user.</span>
+            <span class="nx">Meteor</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s">&quot;characters&quot;</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nv">onError: </span><span class="nf">(err) -&gt;</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span><span class="p">.</span><span class="nx">error</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">reason</span>
+                <span class="nv">onReady: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+               
+            <span class="p">})</span>
+
+            <span class="c1">#Retrieve the character document for the currently selected character.</span>
+            <span class="nv">selectedCharacterId = </span><span class="nx">user</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">selected</span>
+            <span class="nv">character = </span><span class="nx">Characters</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">_id: </span><span class="nx">selectedCharacterId</span><span class="p">})</span>
+
+            <span class="k">if</span> <span class="nx">character</span><span class="o">?</span>
+                <span class="c1">#If a character document has been found, create a new Player instance using the data from the retrieved document.</span>
+                <span class="nv">share.World.Player = </span><span class="k">new</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Player</span><span class="p">(</span><span class="nx">character</span><span class="p">)</span>
+    <span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="router-logic">Router Logic</h2>
+
+<hr /></div></div><div class="code"><div class="wrapper">    <span class="nx">Router</span><span class="p">.</span><span class="nx">map</span> <span class="nf">-&gt;</span>
+        <span class="nx">@route</span> <span class="s">&#39;home&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="nv">action: </span><span class="p">()</span> <span class="nf">-&gt;</span> <span class="nx">setNavigationPill</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">)</span>
+        <span class="nx">@route</span> <span class="s">&#39;world&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;/world&#39;</span><span class="p">,</span> <span class="nv">controller: </span><span class="nx">@WorldController</span>
+        <span class="nx">@route</span> <span class="s">&#39;character_list&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;/characters&#39;</span><span class="p">,</span> <span class="nv">controller: </span><span class="nx">@CharacterListController</span>
+        <span class="nx">@route</span> <span class="s">&#39;character&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;/characters/:id&#39;</span><span class="p">,</span> <span class="nv">controller: </span><span class="nx">@CharacterController</span><span class="p">,</span> <span class="nv">data: </span><span class="p">{}</span>
+        <span class="nx">@route</span> <span class="s">&#39;characterCreation&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;/character_creation&#39;</span><span class="p">,</span> <span class="nv">controller: </span><span class="nx">@CharacterCreationController</span><span class="p">,</span>
+        <span class="nx">@route</span> <span class="s">&#39;create_account&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;/create_account&#39;</span>
+        <span class="nx">@route</span> <span class="s">&#39;notfound&#39;</span><span class="p">,</span> <span class="nv">path: </span><span class="s">&#39;*&#39;</span>
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="worldcontroller">WorldController:</h3>
+
+<p>Route controller for the World page.</p></div></div><div class="code"><div class="wrapper">    <span class="k">class</span> <span class="nx">@WorldController</span> <span class="k">extends</span> <span class="nx">RouteController</span>
+        <span class="nv">before: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+            <span class="k">if</span> <span class="o">not</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">user</span><span class="p">()</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s">&#39;sign_in&#39;</span><span class="p">)</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="nx">Characters</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">owner: </span><span class="nx">Meteor</span><span class="p">.</span><span class="nx">userId</span><span class="p">()})</span> <span class="o">is</span> <span class="kc">undefined</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s">&#39;character_list&#39;</span><span class="p">)</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+
+        <span class="nv">action: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+            <span class="nv">path = </span><span class="k">this</span><span class="p">.</span><span class="nx">path</span>
+            <span class="nx">setNavigationPill</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="characterlistcontroller">CharacterListController:</h3>
+
+<p>Route controller for the Characters page. This lists all characters (if any) in a table.</p></div></div><div class="code"><div class="wrapper">    <span class="k">class</span> <span class="nx">@CharacterListController</span> <span class="k">extends</span> <span class="nx">RouteController</span>
+        <span class="nv">before: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+            <span class="k">if</span> <span class="o">not</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">user</span><span class="p">()</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s">&#39;sign_in&#39;</span><span class="p">)</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+        <span class="nv">action: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+            <span class="nv">path = </span><span class="k">this</span><span class="p">.</span><span class="nx">path</span>
+            <span class="nx">setNavigationPill</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="charactercontroller">CharacterController:</h3>
+
+<p>Router controller for Character UI page. Displays stat and skill info for a specific character.</p></div></div><div class="code"><div class="wrapper">    <span class="k">class</span> <span class="nx">@CharacterController</span> <span class="k">extends</span> <span class="nx">RouteController</span>
+        <span class="nv">before: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+            <span class="k">if</span> <span class="o">not</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">user</span><span class="p">()</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s">&#39;sign_in&#39;</span><span class="p">)</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+            <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;characterId&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+        <span class="nv">action: </span><span class="p">()</span> <span class="o">=&gt;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s">&#39;character&#39;</span><span class="p">,{</span><span class="nv">id: </span><span class="k">this</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">})</span>
+
+    <span class="c1">#CharacterCreationController:** Router controller for Character Creation page. **THIS IS CURRENTLY NOT IN USE!**</span>
+    <span class="k">class</span> <span class="nx">@CharacterCreationController</span> <span class="k">extends</span> <span class="nx">RouteController</span>
+        <span class="nv">before: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+            <span class="k">if</span> <span class="o">not</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">user</span><span class="p">()</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s">&#39;sign_in&#39;</span><span class="p">)</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+        <span class="nv">action: </span><span class="p">()</span> <span class="o">=&gt;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>setNavigationPill(String):</strong>
+Helper function to set the navigation menu's currently selected option when a route is visited.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">setNavigationPill = </span><span class="nf">(path) -&gt;</span>
+        <span class="k">switch</span> <span class="nx">path</span>
+            <span class="k">when</span> <span class="s">&#39;/world&#39;</span>
+                <span class="nv">pill = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">nav-world&quot;</span><span class="p">)</span>
+            <span class="k">when</span> <span class="s">&#39;/characters&#39;</span>
+                <span class="nv">pill = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#nav-character&#39;</span><span class="p">)</span>
+            <span class="k">when</span> <span class="s">&#39;/&#39;</span>
+                <span class="nv">pill = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#nav-home&#39;</span><span class="p">)</span>
+
+        <span class="nv">li = </span><span class="nx">$</span><span class="p">(</span><span class="nx">pill</span><span class="p">).</span><span class="nx">parent</span><span class="p">()</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">li</span><span class="p">).</span><span class="nx">siblings</span><span class="p">().</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&quot;active&quot;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">li</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&quot;active&quot;</span><span class="p">)</span>
+
+<span class="c1">#Spawn a test enemy in the server. REMOVE FROM CODE WHEN READY TO TEST ENEMY CREATION PER ROOM</span>
+<span class="k">if</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">isServer</span>
+    <span class="nv">test = </span><span class="k">new</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Enemy</span><span class="p">({</span><span class="nv">_id: </span><span class="s">&quot;fake&quot;</span><span class="p">,</span> <span class="nv">name: </span><span class="s">&quot;Mogdor&quot;</span><span class="p">,</span> <span class="nv">hp: </span><span class="mi">100</span><span class="p">,</span> <span class="nv">currentRoom: </span><span class="s">&quot;Central Area of the Marsh&quot;</span><span class="p">})</span>
+    <span class="nx">test</span><span class="p">.</span><span class="nx">setCooldown</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#tick = Meteor.setInterval(() =&gt;</span>
+        <span class="c1">#console.log &quot;alright&quot; </span>
+     <span class="c1">#, 2000)</span></div></div></div></div></body></html>
