@@ -1,3 +1,10 @@
+# #permissions.coffee
+# Controls client ability to access and modify server data.
+
+# ###Publish Methods
+# - - -
+
+# Regions publisher. Only returns a cursor to a region which contains the room provided in the 'currentRoom' parameter.
 Meteor.publish("regions", (currentRoom) ->
     if not currentRoom?
         this.error new Meteor.Error(950, "argument to publish is null")
@@ -5,6 +12,7 @@ Meteor.publish("regions", (currentRoom) ->
         return Regions.find({rooms: {$in: [currentRoom]}})
 )
 
+# Rooms publisher. Returns a cursor containing all rooms which are part of the region provided by the 'region' parameter.
 Meteor.publish("rooms", (region) ->
     if not region? 
         this.error new Meteor.Error(990, "Malformed or invalid region.")
@@ -12,6 +20,8 @@ Meteor.publish("rooms", (region) ->
         return Rooms.find({region: region})
 )
 
+# Messsages publisher. Returns a cursor containing all messages that are more recent than 'timestamp' 
+# and which the broadcastTo value of the message is global or matches either the region or room that the player is in. 
 Meteor.publish("messages", (roomName, timestamp) ->
     if not roomName?
         this.error(new Meteor.Error(950, "argument to publish is null"))
@@ -22,12 +32,13 @@ Meteor.publish("messages", (roomName, timestamp) ->
         this.error(new Meteor.Error(990, "Malformed or invalid region. Unable to subscribe to messages."))
         return #early out
         
-    #broadcastTo: global -> all players will receive these messages in published data
-    #broadcastTo: regionName -> only players in specified region will receive these messages in published data
-    #broadcastTo: roomName -> only players in specified room will receive these messages in published data
+    # ^ broadcastTo: global -> all players will receive these messages in published data
+    # ^ broadcastTo: regionName -> only players in specified region will receive these messages in published data
+    # ^ broadcastTo: roomName -> only players in specified room will receive these messages in published data
     return Messages.find({timestamp: {$gt: timestamp}, broadcastTo: {$in: [ "global", regionName, roomName ] }, ignore: {$ne: this.userId}})
 )
 
+# Characters publisher. Returns a cursor containing all character documents belonging to the logged in user. 
 Meteor.publish("characters", (userId)->
     user = Meteor.users.findOne(userId)
     if user?
@@ -40,29 +51,23 @@ Meteor.publish("userData", () ->
     return Meteor.users.find({_id: this.userId}, {fields: {'selected': 1}})
 )
 
+# ###Allow/Deny Methods
+# - - -
+
 Accounts.onCreateUser((options, user) ->
     user.profile = {}
     user.profile.selected = undefined
 
     return user
 )
-#Regions.allow({
-#    insert: (userId, doc) ->
-#        return true
-#    update: (userId, doc) ->
-#        return true
-#})
-#Rooms.allow({
-#    insert: (userId, doc) ->
-#        return true
-#    update: (userId, doc) ->
-#        return true
-#})
+
+# Allow settings for Messages collection.
 Messages.allow({
     insert: (userId, doc) -> 
         return userId and doc.sender is userId
 })
 
+# Allow settings for Characters collection.
 Characters.allow({
     insert: (userId, doc) ->
         return (userId and doc.owner is userId)
@@ -71,14 +76,19 @@ Characters.allow({
         return (userId and doc.owner is userId)
 })
 
+# Deny settings for Characters collection.
 Characters.deny({
-    #deny updates by client. updates must be done through server-side code only.
+    # deny updates by client. **updates must be done through server-side code only.**
     update: (userId, doc) ->
         return true
 })
 
-#Insert/Update/Remove Methods to keep specific database actions server-side only.
+# ###Meteor.methods
+# Server methods callable from the client through Meteor.call("method_name", parameters, callback)
+# - - -
+
 Meteor.methods(
+    # * **validateAndMove(String, String)** - attempts to move currently selected character from one room to another. Checks to see if the move is valid before performing the move.
     validateAndMove: (from, to) ->
         check(from, String)
         check(to, String)
@@ -104,7 +114,8 @@ Meteor.methods(
                 if not currentIndex.validMove(to)
                     throw new Meteor.Error(7, "Destination: " + to + " doesn't seem to be connected to current room: " + from + ". This is an invalid move attempt.")
                 else
-
+                    # call Room.enter() and Room.leave() which not only updates the Rooms collection, but updates the Character collection as well.  
+                    # This needs to be reconsidered and most definitely refactored. **Rooms should not be responsible for character data!**
                     targetIndex.enter()
                     currentIndex.leave()
 
@@ -114,6 +125,7 @@ Meteor.methods(
             else
                 console.log EJSON.stringify(region) + " " + EJSON.stringify(currentRoom) + " " + EJSON.stringify(targetRoom)
 
+    # * **print(void)** - Triggers dumping of values to server log. Debug function for developer. 
     print: () ->
         player = Characters.findOne({owner: this.userId})
         region = Regions.findOne({rooms: {$in: [player.currentRoom]}})
@@ -122,7 +134,7 @@ Meteor.methods(
         currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
         currentIndex.print()
 
-
+    # * **createCharacter(String)** - Creates a new character document in the Characters collection with some pre-determined values. 
     createCharacter: (name) ->
         check(name, String)
         if name.length < 3 or name.length > 16
@@ -137,14 +149,13 @@ Meteor.methods(
         console.log query
         return query
 
+    # * **selectCharacter(String)** - Sets the user's 'selected' field to the specified id. This triggers changes which observers watching this field will see. 
+    # This will cause the observers to force updates on objects which depend on the data of the document matching the selected id.
     selectCharacter: (id) ->
         check(id, String)
         Meteor.users.update({_id: this.userId}, {$set: {profile: {selected: id}}})
 
-
-#--------------------------------------------------------------------------------------------------------------------------------#
-# Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     #
-#--------------------------------------------------------------------------------------------------------------------------------#
+# Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     
     setHealth: (argument) ->
         player = Characters.findOne({owner: this.userId, selected: 1})
         Characters.update({_id: player._id}, {$set: {health: argument}})

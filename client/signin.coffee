@@ -1,8 +1,9 @@
-#**Event listeners for both the Sign In and Create Account forms.**
-#  
-#Sign In Form's Event Listener
-#-----------------------------
+# #signin.coffee
+# Event listeners for both the Sign In and Create Account forms.  
+  
+# ###Sign In Form's Event Listener
 Template.sign_in_body.events({
+    # * 'submit' event - 'e' is the event and 't' is the template instance
     'submit #sign-in-form' : (e, t) ->
         e.preventDefault()
         email = t.find('#accountEmail').value
@@ -19,13 +20,14 @@ Template.sign_in_body.events({
         return false
 })
 
-#Create Account Form's Event Listener
-#------------------------------------
+# ###Create Account Form's Event Listener
 Template.create_account_body.events({
+    # * 'click' event for the Create Account form. This clears any color status indicators from the fields of the form when the user clicks on the form.
     'click #create-account-form' : (e) ->
         $('#accountError').css("visibility", "hidden")
         $('.form-group').removeClass('has-error')
 
+    # * 'submit' event for the Create Account form. 'e' is the event and 't' is the template instance.
     'submit #create-account-form' : (e, t) ->
         e.preventDefault()
         email = t.find('#accountEmail').value

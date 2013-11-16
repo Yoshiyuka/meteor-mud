@@ -1,19 +1,27 @@
+# #commands.coffee  
+# A dynamic array of String/Function key/value pairs. This provides the means for a client to interact with the game world.  
+#
 Commands = {}
 
+# ###Communication Commands  
 Commands["/say"] = (argument) -> share.World.Player.say(argument)
 Commands["/yell"] = (argument) -> share.World.Player.yell(argument)
 Commands["/y"] = Commands["/yell"] #alias command for yell
 
+# ###Movement Commands  
 Commands["/go"] = (argument)  -> Meteor.call("enterRoom", argument, (error, result) -> Session.set("sessionStart", share.World.Time() ))
+
 Commands["/north"] = () -> share.World.Player.moveTo("north")
 Commands["/south"] = () -> share.World.Player.moveTo("south")
 Commands["/east"] = () ->  share.World.Player.moveTo("east")
 Commands["/west"] = () ->  share.World.Player.moveTo("west")
-#alias commands for cardinal direction movement
+# ###Alias Commands For Movement  
 Commands["/n"] = Commands["/north"]
 Commands["/s"] = Commands["/south"]
 Commands["/e"] = Commands["/east"]
 Commands["/w"] = Commands["/west"]
+
+# /look - prints a detailed message of a room providing description, a list of exits, players, enemies, items, and notable objects.
 Commands["/look"] = () ->
     #will want to generate a description on the fly later on
     if share.World.Player isnt undefined

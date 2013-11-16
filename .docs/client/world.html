@@ -1,175 +1,147 @@
-<!DOCTYPE html><html lang="en"><head><title>client/world</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/world"><meta name="groc-project-path" content="client/world.coffee"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">client/world.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="k">if</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">isClient</span>
-    <span class="c1">#canvas resolution helper functions pulled from </span>
-    <span class="c1">#http://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas</span>
-    <span class="nx">PIXEL_RATIO</span> <span class="o">=</span><span class="p">(</span> <span class="p">()</span> <span class="nf">-&gt;</span> 
-        <span class="nv">ctx = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s">&quot;canvas&quot;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&quot;2d&quot;</span><span class="p">)</span>
-        <span class="nv">dpr = </span><span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span> <span class="o">or</span> <span class="mi">1</span>
-        <span class="nv">bsr = </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">webkitBackingStorePixelRatio</span> <span class="o">or</span>
-              <span class="nx">ctx</span><span class="p">.</span><span class="nx">mozBackingStorePixelRatio</span> <span class="o">or</span>
-              <span class="nx">ctx</span><span class="p">.</span><span class="nx">msBackingStorePixelRatio</span> <span class="o">or</span>
-              <span class="nx">ctx</span><span class="p">.</span><span class="nx">oBackingStorePixelRatio</span> <span class="o">or</span>
-              <span class="nx">ctx</span><span class="p">.</span><span class="nx">backingStorePixelRatio</span> <span class="o">or</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="nx">dpr</span><span class="o">/</span><span class="nx">bsr</span>
-    <span class="p">)()</span>
+<!DOCTYPE html><html lang="en"><head><title>client/world</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/world"><meta name="groc-project-path" content="client/world.coffee"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">client/world.coffee</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>canvas resolution helper functions pulled from 
+<a href="http://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas">here</a></p></div></div><div class="code"><div class="wrapper"><span class="nx">PIXEL_RATIO</span> <span class="o">=</span><span class="p">(</span> <span class="p">()</span> <span class="nf">-&gt;</span> 
+    <span class="nv">ctx = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s">&quot;canvas&quot;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&quot;2d&quot;</span><span class="p">)</span>
+    <span class="nv">dpr = </span><span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span> <span class="o">or</span> <span class="mi">1</span>
+<span class="nv">bsr = </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">webkitBackingStorePixelRatio</span> <span class="o">or</span>
+          <span class="nx">ctx</span><span class="p">.</span><span class="nx">mozBackingStorePixelRatio</span> <span class="o">or</span>
+          <span class="nx">ctx</span><span class="p">.</span><span class="nx">msBackingStorePixelRatio</span> <span class="o">or</span>
+          <span class="nx">ctx</span><span class="p">.</span><span class="nx">oBackingStorePixelRatio</span> <span class="o">or</span>
+          <span class="nx">ctx</span><span class="p">.</span><span class="nx">backingStorePixelRatio</span> <span class="o">or</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nx">dpr</span><span class="o">/</span><span class="nx">bsr</span>
+<span class="p">)()</span>
 
-    <span class="nv">createHiDPICanvas = </span><span class="nf">(w, h, ratio) -&gt;</span> 
-        <span class="k">if</span> <span class="o">not</span> <span class="nx">ratio</span> <span class="k">then</span> <span class="nv">ratio = </span><span class="nx">PIXEL_RATIO</span>
-        <span class="nv">can = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s">&quot;canvas&quot;</span><span class="p">)</span>
-        <span class="nv">can.width = </span><span class="nx">w</span> <span class="o">*</span> <span class="nx">ratio</span>
-        <span class="nv">can.height = </span><span class="nx">h</span> <span class="o">*</span> <span class="nx">ratio</span>
-        <span class="nv">can.style.width = </span><span class="nx">w</span> <span class="o">+</span> <span class="s">&quot;px&quot;</span>
-        <span class="nv">can.style.height = </span><span class="nx">h</span> <span class="o">+</span> <span class="s">&quot;px&quot;</span>
-        <span class="nx">can</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&quot;2d&quot;</span><span class="p">).</span><span class="nx">setTransform</span><span class="p">(</span><span class="nx">ratio</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ratio</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    
-        <span class="k">return</span> <span class="nx">can</span>
-    <span class="c1">#end helper functions</span>
+<span class="nv">createHiDPICanvas = </span><span class="nf">(w, h, ratio) -&gt;</span> 
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">ratio</span> <span class="k">then</span> <span class="nv">ratio = </span><span class="nx">PIXEL_RATIO</span>
+    <span class="nv">can = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s">&quot;canvas&quot;</span><span class="p">)</span>
+    <span class="nv">can.width = </span><span class="nx">w</span> <span class="o">*</span> <span class="nx">ratio</span>
+    <span class="nv">can.height = </span><span class="nx">h</span> <span class="o">*</span> <span class="nx">ratio</span>
+    <span class="nv">can.style.width = </span><span class="nx">w</span> <span class="o">+</span> <span class="s">&quot;px&quot;</span>
+    <span class="nv">can.style.height = </span><span class="nx">h</span> <span class="o">+</span> <span class="s">&quot;px&quot;</span>
+    <span class="nx">can</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&quot;2d&quot;</span><span class="p">).</span><span class="nx">setTransform</span><span class="p">(</span><span class="nx">ratio</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ratio</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-    <span class="nv">Template.world.created = </span><span class="p">()</span> <span class="nf">-&gt;</span> 
-        <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;game_output&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
-        <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
-        <span class="nv">output = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;game_output&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">can</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>World template's created callback method. <br />
+This method is called when an instance of the World template is first created.</p></div></div><div class="code"><div class="wrapper"><span class="nv">Template.world.created = </span><span class="p">()</span> <span class="nf">-&gt;</span> 
+    <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;game_output&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
+    <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
+    <span class="nv">output = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;game_output&quot;</span><span class="p">)</span>
 
-        <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;sessionStart&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">())</span>
+    <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;sessionStart&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">())</span>
 
-        <span class="nv">sessionStart = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;sessionStart&quot;</span><span class="p">)</span>
+    <span class="nv">sessionStart = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;sessionStart&quot;</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set up observers for both server and client messages. Push new results into an array as a Session variable.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">serverMessages = </span><span class="nx">Messages</span><span class="p">.</span><span class="nx">find</span><span class="p">()</span>
+    <span class="nv">clientMessages = </span><span class="nx">LocalMessages</span><span class="p">.</span><span class="nx">find</span><span class="p">()</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Observe server messages. These are messages from other players, enemies, and broadcast messages (server events)</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="k">this</span><span class="p">.</span><span class="nv">serverMessagesHandle = </span><span class="nx">serverMessages</span><span class="p">.</span><span class="nx">observeChanges</span><span class="p">({</span>
+        <span class="nv">added: </span><span class="nf">(id, message) -&gt;</span>
+            <span class="nv">incoming = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">)</span>
+            <span class="nx">incoming</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span>
+            <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="nx">incoming</span><span class="p">)</span>
+    <span class="p">})</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Observe client messages. These are messages only the player sees. Personal events starting with 'You' for instance. (You have entered <em>_</em>_)</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="k">this</span><span class="p">.</span><span class="nv">clientMessagesHandle = </span><span class="nx">clientMessages</span><span class="p">.</span><span class="nx">observeChanges</span><span class="p">({</span>
+        <span class="nv">added: </span><span class="nf">(id, message) -&gt;</span>
+            <span class="nv">incoming = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">)</span>
+            <span class="nx">incoming</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span>
+            <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="nx">incoming</span><span class="p">)</span>
+    <span class="p">})</span>
 
-        <span class="nv">serverMessages = </span><span class="nx">Messages</span><span class="p">.</span><span class="nx">find</span><span class="p">()</span>
-        <span class="nv">clientMessages = </span><span class="nx">LocalMessages</span><span class="p">.</span><span class="nx">find</span><span class="p">()</span>
-        <span class="k">this</span><span class="p">.</span><span class="nv">serverMessagesHandle = </span><span class="nx">serverMessages</span><span class="p">.</span><span class="nx">observeChanges</span><span class="p">({</span>
-            <span class="nv">added: </span><span class="nf">(id, message) -&gt;</span>
-                <span class="nv">incoming = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">)</span>
-                <span class="c1">#console.log(&quot;change detected: &quot; + message.text)</span>
-                <span class="nx">incoming</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span>
-                <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="nx">incoming</span><span class="p">)</span>
-        <span class="p">})</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">autorun = </span><span class="kc">undefined</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>World template's destroyed callback method.
+This method is called when an instance of the World template is destroyed. This typically happens on page unload.</p></div></div><div class="code"><div class="wrapper"><span class="nv">Template.world.destroyed = </span><span class="p">()</span> <span class="nf">-&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Stop our observers to prevent them from continuing to run and causing a memory leak.</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="k">this</span><span class="p">.</span><span class="nx">serverMessagesHandle</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">clientMessagesHandle</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">autorun</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+    <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;game_putput&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
+    <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>World template's rendered callback method.
+This method is called every time an instance of the World template is rendered. This happens once after the template is first drawn to the screen (after creation),
+when the page is refreshed, and when any reactive elements are updated/changed (triggering a re-render).</p></div></div><div class="code"><div class="wrapper"><span class="nv">Template.world.rendered= </span><span class="p">()</span> <span class="nf">-&gt;</span>
+    <span class="nv">canvas = </span><span class="nx">createHiDPICanvas</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#input_area&#39;</span><span class="p">).</span><span class="nx">outerWidth</span><span class="p">(),</span> <span class="mi">420</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">canvas</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="s">&quot;game_window&quot;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">canvas</span><span class="p">)</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nv">clientMessagesHandle = </span><span class="nx">clientMessages</span><span class="p">.</span><span class="nx">observeChanges</span><span class="p">({</span>
-            <span class="nv">added: </span><span class="nf">(id, message) -&gt;</span>
-                <span class="nv">incoming = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">)</span>
-                <span class="c1">#console.log &quot;local change detected: &quot; + message.text</span>
-                <span class="nx">incoming</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span>
-                <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="nx">incoming</span><span class="p">)</span>
-        <span class="p">})</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nv">autorun = </span><span class="kc">undefined</span>
-
-    <span class="nv">Template.world.destroyed = </span><span class="p">()</span> <span class="nf">-&gt;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">serverMessagesHandle</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">clientMessagesHandle</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">autorun</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
-        <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;game_putput&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
-        <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">())</span>
-
-    <span class="nv">Template.world.rendered= </span><span class="p">()</span> <span class="nf">-&gt;</span>
-        <span class="nv">canvas = </span><span class="nx">createHiDPICanvas</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#input_area&#39;</span><span class="p">).</span><span class="nx">outerWidth</span><span class="p">(),</span> <span class="mi">420</span><span class="p">)</span>
-        <span class="nx">$</span><span class="p">(</span><span class="nx">canvas</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="s">&quot;game_window&quot;</span><span class="p">)</span>
-        <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">canvas</span><span class="p">)</span>
-    
-        <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">autorun</span> <span class="o">is</span> <span class="kc">undefined</span>
-            <span class="k">this</span><span class="p">.</span><span class="nv">autorun = </span><span class="nx">Deps</span><span class="p">.</span><span class="nx">autorun</span><span class="p">(()</span><span class="nf">-&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>observeRegion()</p></div></div><div class="code"><div class="wrapper">                <span class="nx">updateCanvas</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="k">else</span>
-            <span class="c1">#update the canvas once. This is for trying to revisit the page while still on it</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;autorun already running. updating canvas once. rendered autorun&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">autorun</span> <span class="o">is</span> <span class="kc">undefined</span>
+        <span class="k">this</span><span class="p">.</span><span class="nv">autorun = </span><span class="nx">Deps</span><span class="p">.</span><span class="nx">autorun</span><span class="p">(()</span><span class="nf">-&gt;</span>
             <span class="nx">updateCanvas</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">else</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the canvas once. This is for trying to revisit (not refresh) the page while still on it</p></div></div><div class="code"><div class="wrapper">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;autorun already running. updating canvas once. rendered autorun&quot;</span><span class="p">)</span>
+        <span class="nx">updateCanvas</span><span class="p">()</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>World template's event listeners.</p></div></div><div class="code"><div class="wrapper"><span class="nx">Template</span><span class="p">.</span><span class="nx">world</span><span class="p">.</span><span class="nx">events</span><span class="p">({</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>'click' event on submit button. Get user input from text input field and parse it.</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="s">&#39;click #submit&#39;</span> <span class="o">:</span> <span class="nf">(e, t) -&gt;</span>
+            <span class="nv">canvas = </span><span class="nx">t</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">)</span>
+            <span class="nv">input = </span><span class="nx">$</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#input_area&#39;</span><span class="p">))</span>
+            <span class="nx">parseCommands</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">val</span><span class="p">())</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>'keyup' and 'keydown' events for Enter key. Allows submitting input field without clicking on the submit button.</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="s">&#39;keyup #input_area, keydown #input_area&#39;</span> <span class="o">:</span> <span class="nf">(e, t) -&gt;</span>
+        <span class="k">if</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&quot;keyup&quot;</span> <span class="o">and</span> <span class="nx">e</span><span class="p">.</span><span class="nx">which</span> <span class="o">is</span> <span class="mi">13</span>
+            <span class="nv">value = </span><span class="nb">String</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span> <span class="o">or</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
 
-    <span class="nx">Template</span><span class="p">.</span><span class="nx">world</span><span class="p">.</span><span class="nx">events</span><span class="p">({</span>
-        <span class="s">&#39;click #submit&#39;</span> <span class="o">:</span> <span class="nf">(e, t) -&gt;</span>
-                <span class="nv">canvas = </span><span class="nx">t</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">)</span>
-                <span class="nv">input = </span><span class="nx">$</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#input_area&#39;</span><span class="p">))</span>
-            <span class="c1">#Messages.insert({text: input.val(), broadcastTo: &quot;global&quot;, sender: Meteor.userId()})</span>
-                <span class="nx">parseCommands</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">val</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nx">value</span>
+                <span class="nx">parseCommands</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+                <span class="nv">e.target.value = </span><span class="s">&quot;&quot;</span>
+    <span class="p">})</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>parseCommands(String)</strong> - Splits given string and checks if the beginning of the string matches any keys in the Commands array. <br />
+If string doesn't start with '/' then it defaults to the /say command.</p></div></div><div class="code"><div class="wrapper"><span class="nv">parseCommands = </span><span class="nf">(argument) -&gt;</span>
+    <span class="nx">check</span><span class="p">(</span><span class="nx">argument</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
+   
+    <span class="nv">command = </span><span class="nx">argument</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">argument</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+    <span class="nv">parameters = </span><span class="nx">argument</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">argument</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="s">&#39;keyup #input_area, keydown #input_area&#39;</span> <span class="o">:</span> <span class="nf">(e, t) -&gt;</span>
-            <span class="k">if</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&quot;keyup&quot;</span> <span class="o">and</span> <span class="nx">e</span><span class="p">.</span><span class="nx">which</span> <span class="o">is</span> <span class="mi">13</span>
-                <span class="nv">value = </span><span class="nb">String</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span> <span class="o">or</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="c1">#check for one-word commands with no following spaces</span>
+    <span class="k">if</span> <span class="nx">command</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;command length is 0&quot;</span><span class="p">)</span>
+        <span class="nv">command = </span><span class="nx">parameters</span>
+        <span class="nv">parameters = </span><span class="s">&quot;&quot;</span>
 
-                <span class="k">if</span> <span class="nx">value</span>
-                    <span class="nx">parseCommands</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
-                    <span class="nv">e.target.value = </span><span class="s">&quot;&quot;</span>
-        <span class="p">})</span>
+    <span class="k">if</span> <span class="nx">command</span> <span class="k">of</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Commands</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;command: &quot;</span> <span class="o">+</span> <span class="nx">command</span> <span class="o">+</span> <span class="s">&quot; parameters: &quot;</span> <span class="o">+</span> <span class="nx">parameters</span><span class="p">)</span>
+        <span class="nx">share</span><span class="p">.</span><span class="nx">Commands</span><span class="p">[</span><span class="nx">command</span><span class="p">](</span><span class="nx">parameters</span><span class="p">)</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">command</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">isnt</span> <span class="s">&#39;/&#39;</span>
+        <span class="c1">#lack of / will be considered an implicit /say command</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">command</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="nx">share</span><span class="p">.</span><span class="nx">Commands</span><span class="p">[</span><span class="s">&quot;/say&quot;</span><span class="p">](</span><span class="nx">command</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">parameters</span><span class="p">)</span>
+    <span class="k">else</span>
+        <span class="c1">#invalid commands beginning with / will be noted as such.</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;Invalid command: &quot;</span> <span class="o">+</span> <span class="nx">command</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>clearCanvas(void)</strong> - Helper function which clears the canvas when any new data needs to be drawn to it.</p></div></div><div class="code"><div class="wrapper"><span class="nv">clearCanvas = </span><span class="p">()</span> <span class="nf">-&gt;</span>
+    <span class="nv">canvas = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nv">context = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&#39;2d&#39;</span><span class="p">)</span>
 
 
-    <span class="nv">parseCommands = </span><span class="nf">(argument) -&gt;</span>
-        <span class="nx">check</span><span class="p">(</span><span class="nx">argument</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
-       
-        <span class="nv">command = </span><span class="nx">argument</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">argument</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">))</span>
-        <span class="nv">parameters = </span><span class="nx">argument</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">argument</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nv">context.font = </span><span class="s">&#39;10pt Arial&#39;</span>
+    <span class="nv">context.textBaseline = </span><span class="s">&quot;top&quot;</span>
+    <span class="nx">context</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>updateCanvas(void)</strong> - Canvas updater. Draws text to canvas and runs text to be drawn through a function to handle word-wrapping before being rendered to screen.</p></div></div><div class="code"><div class="wrapper"><span class="nv">updateCanvas = </span><span class="p">()</span> <span class="nf">-&gt;</span>
+    <span class="nv">canvas = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nv">context = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&#39;2d&#39;</span><span class="p">)</span>
 
-        <span class="c1">#check for one-word commands with no following spaces</span>
-        <span class="k">if</span> <span class="nx">command</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;command length is 0&quot;</span><span class="p">)</span>
-            <span class="nv">command = </span><span class="nx">parameters</span>
-            <span class="nv">parameters = </span><span class="s">&quot;&quot;</span>
+    <span class="nx">clearCanvas</span><span class="p">()</span>
+    
+    <span class="nv">output = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;game_output&quot;</span><span class="p">)</span>
+    <span class="nv">incoming = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nx">command</span> <span class="k">of</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Commands</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;command: &quot;</span> <span class="o">+</span> <span class="nx">command</span> <span class="o">+</span> <span class="s">&quot; parameters: &quot;</span> <span class="o">+</span> <span class="nx">parameters</span><span class="p">)</span>
-            <span class="nx">share</span><span class="p">.</span><span class="nx">Commands</span><span class="p">[</span><span class="nx">command</span><span class="p">](</span><span class="nx">parameters</span><span class="p">)</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="nx">command</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">isnt</span> <span class="s">&#39;/&#39;</span>
-            <span class="c1">#lack of / will be considered an implicit /say command</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">command</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-            <span class="nx">share</span><span class="p">.</span><span class="nx">Commands</span><span class="p">[</span><span class="s">&quot;/say&quot;</span><span class="p">](</span><span class="nx">command</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nx">parameters</span><span class="p">)</span>
+    <span class="nv">maxWidth = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="mi">20</span>
+    <span class="nv">lineHeight = </span><span class="mi">20</span> <span class="c1">#20 pixel line height</span>
+
+    <span class="nv">x = </span><span class="mi">10</span> <span class="c1">#10 pixel padding on left</span>
+    <span class="nv">y = </span><span class="mi">5</span>  <span class="c1">#5 pixel padding on top</span>
+    <span class="c1">#end magic numbers. Clearly you didn&#39;t fix that crap.</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">incoming</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">by</span> <span class="mi">1</span>
+        <span class="nx">wrapText</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">output</span><span class="p">,</span> <span class="nx">incoming</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">maxWidth</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nx">output</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">20</span>
+        <span class="nx">output</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">output</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">by</span> <span class="mi">1</span>
+        <span class="nx">y</span> <span class="o">+=</span> <span class="nx">lineHeight</span>
+        <span class="nx">context</span><span class="p">.</span><span class="nx">fillText</span><span class="p">(</span><span class="nx">output</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>wrapText(Object, Array, Array, Number)</strong> - Splits a string into multiple lines of text if the width of the string exceeds the width of the canvas it's being rendered to. 
+Each line break is simply added onto the output stack as if it were another input submitted.</p></div></div><div class="code"><div class="wrapper"><span class="nv">wrapText = </span><span class="nf">(context, output, input, maxWidth) -&gt;</span> 
+    <span class="nv">words = </span><span class="nx">input</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+    <span class="nv">line = </span><span class="s">&#39;&#39;</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">words</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">by</span> <span class="mi">1</span>
+        <span class="nv">tempLine = </span><span class="nx">line</span> <span class="o">+</span> <span class="nx">words</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39; &#39;</span>
+        <span class="nv">metrics = </span><span class="nx">context</span><span class="p">.</span><span class="nx">measureText</span><span class="p">(</span><span class="nx">tempLine</span><span class="p">)</span>
+        <span class="nv">testWidth = </span><span class="nx">metrics</span><span class="p">.</span><span class="nx">width</span>
+
+        <span class="k">if</span> <span class="nx">testWidth</span> <span class="o">&gt;</span> <span class="nx">maxWidth</span> <span class="o">and</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
+            <span class="nv">line = </span><span class="nx">words</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39; &#39;</span>
         <span class="k">else</span>
-            <span class="c1">#invalid commands beginning with / will be noted as such.</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;Invalid command: &quot;</span> <span class="o">+</span> <span class="nx">command</span><span class="p">)</span>
-
-
-    <span class="nv">clearCanvas = </span><span class="p">()</span> <span class="nf">-&gt;</span>
-        <span class="nv">canvas = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="nv">context = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&#39;2d&#39;</span><span class="p">)</span>
-
-
-        <span class="nv">context.font = </span><span class="s">&#39;10pt Arial&#39;</span>
-        <span class="nv">context.textBaseline = </span><span class="s">&quot;top&quot;</span>
-        <span class="nx">context</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span>
-
-    <span class="nv">updateCanvas = </span><span class="p">()</span> <span class="nf">-&gt;</span>
-        <span class="nv">canvas = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#game_window&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="nv">context = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&#39;2d&#39;</span><span class="p">)</span>
-
-        <span class="nx">clearCanvas</span><span class="p">()</span>
-        
-        <span class="nv">output = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;game_output&quot;</span><span class="p">)</span>
-        <span class="nv">incoming = </span><span class="nx">Session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;incoming&quot;</span><span class="p">)</span>
-
-        <span class="nv">maxWidth = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="mi">20</span>
-        <span class="nv">lineHeight = </span><span class="mi">20</span> <span class="c1">#20 pixel line height</span>
-
-        <span class="nv">x = </span><span class="mi">10</span> <span class="c1">#10 pixel padding on left</span>
-        <span class="nv">y = </span><span class="mi">5</span>  <span class="c1">#5 pixel padding on top</span>
-        <span class="c1">#end magic numbers. Clearly you didn&#39;t fix that crap.</span>
-
-        <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">incoming</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">by</span> <span class="mi">1</span>
-            <span class="nx">wrapText</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">output</span><span class="p">,</span> <span class="nx">incoming</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">maxWidth</span><span class="p">)</span>
-        <span class="k">while</span> <span class="nx">output</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">20</span>
-            <span class="nx">output</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
-
-        <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">output</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">by</span> <span class="mi">1</span>
-            <span class="nx">y</span> <span class="o">+=</span> <span class="nx">lineHeight</span>
-            <span class="nx">context</span><span class="p">.</span><span class="nx">fillText</span><span class="p">(</span><span class="nx">output</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span>
-
-
-    <span class="nv">wrapText = </span><span class="nf">(context, output, input, maxWidth) -&gt;</span> 
-        <span class="nv">words = </span><span class="nx">input</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
-        <span class="nv">line = </span><span class="s">&#39;&#39;</span>
-
-        <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">words</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">by</span> <span class="mi">1</span>
-            <span class="nv">tempLine = </span><span class="nx">line</span> <span class="o">+</span> <span class="nx">words</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39; &#39;</span>
-            <span class="nv">metrics = </span><span class="nx">context</span><span class="p">.</span><span class="nx">measureText</span><span class="p">(</span><span class="nx">tempLine</span><span class="p">)</span>
-            <span class="nv">testWidth = </span><span class="nx">metrics</span><span class="p">.</span><span class="nx">width</span>
-
-            <span class="k">if</span> <span class="nx">testWidth</span> <span class="o">&gt;</span> <span class="nx">maxWidth</span> <span class="o">and</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
-                <span class="nv">line = </span><span class="nx">words</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39; &#39;</span>
-            <span class="k">else</span>
-                <span class="nv">line = </span><span class="nx">tempLine</span>
-        <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>observeRegion = () -> 
-    player = Characters.findOne({owner: Meteor.userId()})
-    if not player? 
-        console.log "unable to find: " + Meteor.userId()
-    else
-        region = Regions.findOne({'rooms.name': {$in: [player.currentRoom]}})
-    if not region? 
-        console.log "unable to find region!"
-    else 
-        console.log "found region: " + region.name</p></div></div></div></div></body></html>
+            <span class="nv">line = </span><span class="nx">tempLine</span>
+    <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span></div></div></div></div></body></html>
