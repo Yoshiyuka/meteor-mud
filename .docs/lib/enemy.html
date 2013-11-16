@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="en"><head><title>lib/enemy</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="lib/enemy"><meta name="groc-project-path" content="lib/enemy.coffee"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">lib/enemy.coffee</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="enemy">Enemy</h1>
+
+<hr />
+
+<p><strong>(extends the Creature class)</strong> <br />
+All enemies are instanced from this class. Because it is stored in the /lib folder, the Enemy class is available to both server and client code.</p></div></div><div class="code"><div class="wrapper"><span class="k">class</span> <span class="nx">Enemy</span> <span class="k">extends</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Creature</span>
+    <span class="c1">#Set fields of class instance to those provided by options</span>
+    <span class="nv">constructor: </span><span class="nf">(options) -&gt;</span>
+        <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">option</span> <span class="k">of</span> <span class="nx">options</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">key</span> <span class="o">+</span> <span class="s">&quot; | &quot;</span> <span class="o">+</span> <span class="nx">option</span>
+            <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">option</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>tick(void):</strong> an update function which handles decreasing cooldowns and executing queued actions if they are ready during the tick run.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">tick: </span><span class="p">()</span> <span class="o">=&gt;</span>
+        <span class="k">if</span> <span class="nx">@cooldown</span> <span class="o">is</span> <span class="mi">0</span>
+            <span class="nx">@yell</span><span class="p">(</span><span class="s">&quot;WHY CAN&#39;T I ATTACK YOU?!&quot;</span><span class="p">)</span>
+            <span class="vi">@cooldown = </span><span class="mi">6</span>
+        <span class="k">else</span>
+            <span class="nx">@say</span><span class="p">(</span><span class="s">&quot;I really want to hurt you...&quot;</span><span class="p">)</span>
+        <span class="c1">#call Creature.tick() - might not actually want we want to do later on. This remains to be seen.</span>
+        <span class="k">super</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>Make this class available to all .coffee files in the project.</strong></p></div></div><div class="code"><div class="wrapper"><span class="nv">share.Enemy = </span><span class="nx">Enemy</span></div></div></div></div></body></html>
