@@ -14,14 +14,15 @@ class Player extends share.Creature
             console.log @currentRoom
 
             @Inventory = new share.Inventory(this, 16)
-            console.log @Inventory.size()
+            @Equipment = new share.Equipment(this)
+
+            @Inventory.addItem({_id: 999, text: "test object"}, 4)
             console.log @Inventory.count()
-            @Inventory.addItem({_id: 999, text: "test item"})
-            console.log @Inventory.count()
-            @Inventory.addItem({_id: 999, text: "test item two"}, 4)
-            console.log @Inventory.count()
-            @Inventory.addItem({_id: 777, text: "other item"}, 10)
-            console.log @Inventory.count()
+            console.log @Equipment.count()
+            @Equipment.equip({name: "test item", slot: "left_earring"}, "left_earring")
+            console.log @Equipment.count()
+            @Equipment.equip({name: "other test item"}, "helm")
+            console.log @Equipment.count()
             
             # *The instantiation of the Player class indicates that the client is signed in and has selected a character to play with. This means it's safe to subscribe to the world-related collections...*
             

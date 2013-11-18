@@ -34,8 +34,10 @@ class Inventory
             if not @items[item._id]?
                 @items[item._id] = item
                 @items[item._id].amount = amount
-            else
+            else if EJSON.equals(@items[item._id], item)
                 @items[item._id].amount += amount
+            else
+                console.log "malformed object/object id"
 
             return item._id
         else
