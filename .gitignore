@@ -4,4 +4,4 @@
 /.meteor
 .goutputstream-*
 *.gif
-/.docs
+/.docs/*
