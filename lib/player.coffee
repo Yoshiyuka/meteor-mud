@@ -4,6 +4,7 @@
 # Only one Player instance will exist per session for each client. Fields are populated based on data from the Characters collection in the mongo database.  
 #Because it is stored in the /lib folder, the Player class is available to both server and client code.
 class Player extends share.Creature
+    #region Player Constructor
     constructor: () ->
         super
         # ###Client-Only Code:  
@@ -11,6 +12,16 @@ class Player extends share.Creature
         if Meteor.isClient
             console.log "Player constructor has been called. Attempting to subscribe to relevant collections..."
             console.log @currentRoom
+
+            @Inventory = new share.Inventory(this, 16)
+            console.log @Inventory.size()
+            console.log @Inventory.count()
+            @Inventory.addItem({_id: 999, text: "test item"})
+            console.log @Inventory.count()
+            @Inventory.addItem({_id: 999, text: "test item two"}, 4)
+            console.log @Inventory.count()
+            @Inventory.addItem({_id: 777, text: "other item"}, 10)
+            console.log @Inventory.count()
             
             # *The instantiation of the Player class indicates that the client is signed in and has selected a character to play with. This means it's safe to subscribe to the world-related collections...*
             
@@ -80,12 +91,14 @@ class Player extends share.Creature
                     else
                         console.log "fields.profile or fields.profile.selected is undefined in changed callback for @selectedObserver"
             )
+    #endregion
 
     # **_populateData(Object)** - Helper function which adds/sets the fields of the Player class instance of those provided by 'data'
     _populateData: (data) =>
         for key, value of data
             @[key] = value
 
+#region Movement Code
     # **moveTo(String)** - 
     # Checks to make sure that the player is both in a valid room (should always be true) and that the direction the player wants to go towards exists in the current room (rooms must be attached). 
     moveTo: (direction) ->
@@ -111,6 +124,7 @@ class Player extends share.Creature
             Session.set("sessionStart", time)
         else
             LocalMessages.insert({text: "That appears to be a dead end."})
+#endregion
 
     tick: () =>
         super

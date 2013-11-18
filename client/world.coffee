@@ -3,11 +3,12 @@
 PIXEL_RATIO =( () -> 
     ctx = document.createElement("canvas").getContext("2d")
     dpr = window.devicePixelRatio or 1
-bsr = ctx.webkitBackingStorePixelRatio or
-          ctx.mozBackingStorePixelRatio or
-          ctx.msBackingStorePixelRatio or
-          ctx.oBackingStorePixelRatio or
-          ctx.backingStorePixelRatio or 1
+    bsr = ctx.webkitBackingStorePixelRatio or
+    ctx.mozBackingStorePixelRatio or
+    ctx.msBackingStorePixelRatio or
+    ctx.oBackingStorePixelRatio or
+    ctx.backingStorePixelRatio or 1
+
     return dpr/bsr
 )()
 
