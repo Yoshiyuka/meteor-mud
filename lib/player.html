@@ -5,12 +5,24 @@
 <p><strong>(extends the Creature class)</strong> <br />
 Only one Player instance will exist per session for each client. Fields are populated based on data from the Characters collection in the mongo database.  </p></div></div><div class="code"><div class="wrapper"><span class="c1">#Because it is stored in the /lib folder, the Player class is available to both server and client code.</span>
 <span class="k">class</span> <span class="nx">Player</span> <span class="k">extends</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Creature</span>
+    <span class="c1">#region Player Constructor</span>
     <span class="nv">constructor: </span><span class="p">()</span> <span class="nf">-&gt;</span>
         <span class="k">super</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="client-only-code">Client-Only Code:</h3>
 
 <p>Only run the following code if the file is loaded client-side. Server will ignore this.</p></div></div><div class="code"><div class="wrapper">        <span class="k">if</span> <span class="nx">Meteor</span><span class="p">.</span><span class="nx">isClient</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Player constructor has been called. Attempting to subscribe to relevant collections...&quot;</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@currentRoom</span>
+
+            <span class="vi">@Inventory = </span><span class="k">new</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Inventory</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="vi">@Equipment = </span><span class="k">new</span> <span class="nx">share</span><span class="p">.</span><span class="nx">Equipment</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+            <span class="nx">@Inventory</span><span class="p">.</span><span class="nx">addItem</span><span class="p">({</span><span class="nv">_id: </span><span class="mi">999</span><span class="p">,</span> <span class="nv">text: </span><span class="s">&quot;test object&quot;</span><span class="p">},</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@Inventory</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@Equipment</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span>
+            <span class="nx">@Equipment</span><span class="p">.</span><span class="nx">equip</span><span class="p">({</span><span class="nv">name: </span><span class="s">&quot;test item&quot;</span><span class="p">,</span> <span class="nv">slot: </span><span class="s">&quot;left_earring&quot;</span><span class="p">},</span> <span class="s">&quot;left_earring&quot;</span><span class="p">)</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@Equipment</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span>
+            <span class="nx">@Equipment</span><span class="p">.</span><span class="nx">equip</span><span class="p">({</span><span class="nv">name: </span><span class="s">&quot;other test item&quot;</span><span class="p">},</span> <span class="s">&quot;helm&quot;</span><span class="p">)</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">@Equipment</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span>
             </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><em>The instantiation of the Player class indicates that the client is signed in and has selected a character to play with. This means it's safe to subscribe to the world-related collections...</em></p></div></div><div class="code"><div class="wrapper">            </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Subscribe to the Regions collection. When the collection is ready, look up the current region the Player is in based on its current room and then subscribe to the Rooms collection.</p></div></div><div class="code"><div class="wrapper">            <span class="nx">Meteor</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s">&quot;regions&quot;</span><span class="p">,</span> <span class="nx">@currentRoom</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nv">onReady: </span><span class="p">()</span> <span class="o">=&gt;</span>
                     <span class="nv">region = </span><span class="nx">Regions</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="nv">rooms: </span><span class="p">{</span><span class="nv">$in: </span><span class="p">[</span><span class="nx">@currentRoom</span><span class="p">]}})</span>
@@ -63,9 +75,12 @@ Only one Player instance will exist per session for each client. Fields are popu
                             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;playerObserver is invalid&quot;</span>
                     <span class="k">else</span>
                         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;fields.profile or fields.profile.selected is undefined in changed callback for @selectedObserver&quot;</span>
-            <span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>_populateData(Object)</strong> - Helper function which adds/sets the fields of the Player class instance of those provided by 'data'</p></div></div><div class="code"><div class="wrapper">    <span class="nv">_populateData: </span><span class="nf">(data) =&gt;</span>
+            <span class="p">)</span>
+    <span class="c1">#endregion</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>_populateData(Object)</strong> - Helper function which adds/sets the fields of the Player class instance of those provided by 'data'</p></div></div><div class="code"><div class="wrapper">    <span class="nv">_populateData: </span><span class="nf">(data) =&gt;</span>
         <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">data</span>
-            <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>moveTo(String)</strong> - 
+            <span class="nx">@</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+
+<span class="c1">#region Movement Code</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>moveTo(String)</strong> - 
 Checks to make sure that the player is both in a valid room (should always be true) and that the direction the player wants to go towards exists in the current room (rooms must be attached). </p></div></div><div class="code"><div class="wrapper">    <span class="nv">moveTo: </span><span class="nf">(direction) -&gt;</span>
         <span class="nx">check</span><span class="p">(</span><span class="nx">direction</span><span class="p">,</span> <span class="nb">String</span><span class="p">)</span>
 
@@ -87,6 +102,7 @@ Checks to make sure that the player is both in a valid room (should always be tr
             <span class="nx">Session</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;sessionStart&quot;</span><span class="p">,</span> <span class="nx">time</span><span class="p">)</span>
         <span class="k">else</span>
             <span class="nx">LocalMessages</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="nv">text: </span><span class="s">&quot;That appears to be a dead end.&quot;</span><span class="p">})</span>
+<span class="c1">#endregion</span>
 
     <span class="nv">tick: </span><span class="p">()</span> <span class="o">=&gt;</span>
         <span class="k">super</span>

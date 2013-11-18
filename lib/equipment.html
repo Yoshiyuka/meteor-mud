@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><title>lib/equipment</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="lib/equipment"><meta name="groc-project-path" content="lib/equipment.coffee"><meta name="groc-github-url" content="https://github.com/Yoshiyuka/meteor-mud"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/Yoshiyuka/meteor-mud/blob/master/lib/equipment.coffee">lib/equipment.coffee</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="equipment">Equipment</h1>
+
+<hr />
+
+<p>Represents items which an entity has equipped.</p></div></div><div class="code"><div class="wrapper"><span class="k">class</span> <span class="nx">Equipment</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>constructor(Object, Number)</strong> - initialize the Equipment class with default values.
+- parent: the object this component is attached to</p></div></div><div class="code"><div class="wrapper">    <span class="nv">constructor: </span><span class="nf">(@parent) -&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;equipment created.&quot;</span>
+        <span class="vi">@slots = </span><span class="p">{</span>
+            <span class="nv">left_earring: </span><span class="kc">undefined</span>
+            <span class="nv">right_earring: </span><span class="kc">undefined</span>
+            <span class="nv">helm: </span><span class="kc">undefined</span>
+            <span class="nv">shoulders: </span><span class="kc">undefined</span>
+            <span class="nv">chest: </span><span class="kc">undefined</span>
+            <span class="nv">shirt: </span><span class="kc">undefined</span>
+            <span class="nv">legs: </span><span class="kc">undefined</span>
+            <span class="nv">boots: </span><span class="kc">undefined</span>
+            <span class="nv">gloves: </span><span class="kc">undefined</span>
+            <span class="nv">left_ring: </span><span class="kc">undefined</span>
+            <span class="nv">right_ring: </span><span class="kc">undefined</span>
+        <span class="p">}</span>
+
+        <span class="vi">@validSlots = </span><span class="p">[]</span>
+        <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">@slots</span>
+            <span class="nx">@validSlots</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+
+    <span class="c1">#might not be needed...</span>
+    <span class="nv">size: </span><span class="p">()</span> <span class="nf">-&gt;</span> <span class="k">super</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(Number) <strong>count(void)</strong> - returns number of equipped items.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">count: </span><span class="p">()</span> <span class="nf">-&gt;</span>
+        <span class="nv">result = </span><span class="mi">0</span>
+        <span class="k">for</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">@slots</span>
+            <span class="k">if</span> <span class="nx">item</span><span class="o">?</span>
+                <span class="nx">result</span><span class="o">++</span>
+        <span class="k">return</span> <span class="nx">result</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>equip(Object, String)</strong> - attempts to equip the item in the specified slot.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">equip: </span><span class="nf">(item, slot) -&gt;</span>
+        <span class="c1">#check(item, Object)</span>
+        <span class="c1">#check(slot, String)</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Starting Equip Method&quot;</span>
+        <span class="k">if</span> <span class="o">not</span> <span class="nx">@slots</span><span class="p">[</span><span class="nx">slot</span><span class="p">]</span><span class="o">?</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Attempting to equip </span><span class="si">#{</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s"> in </span><span class="si">#{</span><span class="nx">slot</span><span class="si">}</span><span class="s">...&quot;</span>
+            <span class="k">if</span> <span class="nx">item</span><span class="p">.</span><span class="nx">slot</span><span class="o">?</span> <span class="o">and</span> <span class="nx">@validSlots</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">slot</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="nx">@slots</span><span class="p">[</span><span class="nx">slot</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Successfully equipped: </span><span class="si">#{</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s"> in </span><span class="si">#{</span><span class="nx">slot</span><span class="si">}</span><span class="s">&quot;</span>
+        <span class="k">else</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;Equipment slot: </span><span class="si">#{</span><span class="nx">slot</span><span class="si">}</span><span class="s"> is already occupied by </span><span class="si">#{</span><span class="nx">@slots</span><span class="p">[</span><span class="nx">slot</span><span class="p">]</span><span class="si">}</span><span class="s">&quot;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>unequip(String)</strong> - attempts to unequip an item from the specified equipment slot.</p></div></div><div class="code"><div class="wrapper">    <span class="nv">unequip: </span><span class="nf">(slot) -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><strong>Make the Equipment class available to all .coffee files in the project.</strong></p></div></div><div class="code"><div class="wrapper"><span class="nv">share.Equipment = </span><span class="nx">Equipment</span></div></div></div></div></body></html>
