@@ -19,7 +19,7 @@ class Player extends share.Creature
             @Inventory.addItem({_id: 999, text: "test object"}, 4)
             console.log @Inventory.count()
             console.log @Equipment.count()
-            @Equipment.equip({name: "test item", slot: "left_earring"}, "left_earring")
+            @Equipment.equip({name: "test item", slot: "left_earring"}, "left earring")
             console.log @Equipment.count()
             @Equipment.equip({name: "other test item"}, "helm")
             console.log @Equipment.count()

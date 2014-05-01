@@ -7,17 +7,17 @@ class Equipment
     constructor: (@parent) ->
         console.log "equipment created."
         @slots = {
-            left_earring: undefined
-            right_earring: undefined
-            helm: undefined
-            shoulders: undefined
-            chest: undefined
-            shirt: undefined
-            legs: undefined
-            boots: undefined
-            gloves: undefined
-            left_ring: undefined
-            right_ring: undefined
+            "left earring": undefined
+            "right earring": undefined
+            "helm": undefined
+            "shoulders": undefined
+            "chest": undefined
+            "shirt": undefined
+            "legs": undefined
+            "boots": undefined
+            "gloves": undefined
+            "left ring": undefined
+            "right ring": undefined
         }
 
         @validSlots = []
@@ -30,8 +30,8 @@ class Equipment
     # (Number) **count(void)** - returns number of equipped items.
     count: () ->
         result = 0
-        for item of @slots
-            if item?
+        for key, value of @slots
+            if value?
                 result++
         return result
 

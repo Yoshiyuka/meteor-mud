@@ -13,3 +13,5 @@
 @Messages = new Meteor.Collection("messages") 
 # All player characters
 @Characters = new Meteor.Collection("characters")
+# Inventories of each entity with an Inventory component.
+@Inventory = new Meteor.Collection("inventory")

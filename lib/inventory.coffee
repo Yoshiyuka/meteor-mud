@@ -51,7 +51,7 @@ class Inventory
         if @items[item_id]?
             @items[item_id].amount -= amount
 
-            # remove item_id index in this.items if there are no more items matching item_id
+            #remove item_id index in this.items if there are no more items matching item_id
             if @items[item_id].amount <= 0
                 delete @items[item_id]
     #endregion

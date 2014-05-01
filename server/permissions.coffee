@@ -44,13 +44,24 @@ Meteor.publish("characters", (userId)->
     if user?
         return Characters.find({owner: userId})
     else
-        this.error(new Meteor.Error(920, "User is unknown! Can't return character data."))
+        this.error(new Meteor.Error(920, "User is undefined. Unable to return data."))
+)
+
+# Publish data for inventory for the client's currently selected character.
+Meteor.publish("inventory", () ->
+    if Meteor.user?
+        selected = Meteor.user.profile.selected
+        console.log "selected is #{selected}"
+        return Inventory.find({owner: selected})
+    else
+        throw new Meteor.Error(920, "User is undefined. Unable to return data.")
 )
 
 Meteor.publish("userData", () ->
     return Meteor.users.find({_id: this.userId}, {fields: {'selected': 1}})
 )
 
+#region Allow/Deny Methods
 # ###Allow/Deny Methods
 # - - -
 
@@ -76,18 +87,29 @@ Characters.allow({
         return (userId and doc.owner is userId)
 })
 
+# Deny settings for Inventory collection.
+Inventory.deny({
+    insert: (userId, doc) ->
+        return true
+    update: (userId, doc) ->
+        return true
+    remove: (userId, doc) ->
+        return true
+    })
 # Deny settings for Characters collection.
 Characters.deny({
     # deny updates by client. **updates must be done through server-side code only.**
     update: (userId, doc) ->
         return true
 })
+#endregion
 
 # ###Meteor.methods
 # Server methods callable from the client through Meteor.call("method_name", parameters, callback)
 # - - -
 
 Meteor.methods(
+#region Movement Methods
     # * **validateAndMove(String, String)** - attempts to move currently selected character from one room to another. Checks to see if the move is valid before performing the move.
     validateAndMove: (from, to) ->
         check(from, String)
@@ -124,6 +146,7 @@ Meteor.methods(
                     return time
             else
                 console.log EJSON.stringify(region) + " " + EJSON.stringify(currentRoom) + " " + EJSON.stringify(targetRoom)
+#endregion
 
     # * **print(void)** - Triggers dumping of values to server log. Debug function for developer. 
     print: () ->
@@ -134,6 +157,7 @@ Meteor.methods(
         currentIndex = share.World.Regions[region._id].rooms[currentRoom._id]
         currentIndex.print()
 
+#region Character Methods
     # * **createCharacter(String)** - Creates a new character document in the Characters collection with some pre-determined values. 
     createCharacter: (name) ->
         check(name, String)
@@ -154,7 +178,8 @@ Meteor.methods(
     selectCharacter: (id) ->
         check(id, String)
         Meteor.users.update({_id: this.userId}, {$set: {profile: {selected: id}}})
-
+#endregion
+#
 # Temporary Meteor methods to update character data to see character UI update in real-time rather than wait on Mongo shell.     
     setHealth: (argument) ->
         player = Characters.findOne({owner: this.userId, selected: 1})
